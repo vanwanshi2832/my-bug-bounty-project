@@ -1,323 +1,89 @@
 #!/bin/bash
-BK="\e[7m"
-RT="\e[0m"
-GR="\e[32m"
-YW="\e[93m"
 
-if (( $EUID != 0 )); then
-    echo -e "MAKE SURE YOU'RE ROOT BEFORE RUNNING THE SCRIPT"
-    exit
+#MAKE DIRECTORIES
+mkdir -p tools
+
+#INSTALL INTERLACE
+echo -e "\n-----------------------INSTALLING INTERLACE------------------------"
+cd ./tools
+git clone https://github.com/codingo/Interlace.git
+cd -
+pip3 install --user -r ./tools/Interlace/requirements.txt
+cd ./tools/Interlace/
+if ! test `which sudo`; then
+	python3 setup.py install	
+else
+	sudo python3 setup.py install
 fi
+cd -
+echo -e "\n-----------------------FINISHED INSTALLING INTERLACE------------------------"
 
-folders(){
-    mkdir -p ~/tools
-    mkdir -p ~/tools/.tmp
-    mkdir -p ~/.gf
-    mkdir -p ~/wordlists
-}
+#INSTALL SECRETFINDER
+echo -e "\n-----------------------INSTALLING SECRETFINDER------------------------"
+cd ./tools
+git clone https://github.com/m4ll0k/SecretFinder.git
+cd -
+pip3 install --user -r ./tools/SecretFinder/requirements.txt
+echo -e "\n-----------------------FINISHED INSTALLING SECRETFINDER------------------------"
 
-golanguage(){
-    goversion=$(curl -ks -L https://go.dev/VERSION?m=text)
-    wget https://go.dev/dl/$goversion.linux-amd64.tar.gz -q
-    rm -rf /usr/local/go && tar -C /usr/local -xzf $goversion.linux-amd64.tar.gz
-    export PATH=$PATH:/usr/local/go/bin
-    echo "export PATH=$PATH:/usr/local/go/bin" >> .bashrc
-    if command -v go &> /dev/null; then
-        echo -e "\n${GR}GO INSTALLED SUCCESSFULLY${RT}"
-    else
-        echo -e "\n${YW}THERE'S A PROBLEM INSTALLING GO, TRY INSTALLING IT MANUALLY${RT}"
-    fi
-    rm -rf $goversion.linux-amd64.tar.gz
-}
+#INSTALL GAU
+echo -e "\n-----------------------INSTALLING GAU------------------------"
+go install -v github.com/tomnomnom/waybackurls@latest
+go install -v github.com/lc/gau@latest
+echo -e "\n-----------------------FINISHED INSTALLING GAU------------------------"
 
-dependencies(){
-    mv .github/payloads/patterns/*.json ~/.gf/ 2> /dev/null && cd
-    echo -e "${BK}INSTALLING ALL DEPENDENCIES${RT}"
-    sudo apt-get update > /dev/null 2>&1
-    sudo apt-get full-upgrade -y > /dev/null 2>&1
-    sudo apt-get install apt-transport-https bsdmainutils build-essential snapd cmake curl dnsutils gcc git jq libdata-hexdump-perl libffi-dev libpcap-dev libssl-dev libxml2-dev libxml2-utils libxslt1-dev lynx medusa nmap procps pv python3 python3-dev python3-pip wget zip zlib1g-dev libpcap-dev screen -y > /dev/null 2>&1
-    sudo snap install chromium > /dev/null 2>&1
-    golanguage
-    echo -e "${GR}SUCCESS${RT}\n"
-}
+#INSTALL SUBJS
+echo -e "\n-----------------------INSTALLING SUBJS------------------------"
+go install -v github.com/lc/subjs@latest
+echo -e "\n-----------------------FINISHED INSTALLING SUBJS------------------------"
 
-githubd(){
-    echo -e "${BK}DOWNLOADING AND INSTALLING ALL TOOLS FROM GITHUB${RT}\n"
+#INSTALL HAKCHECKURL
+echo -e "\n-----------------------INSTALLING HTTPX------------------------"
+go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+echo -e "\n-----------------------FINISHED INSTALLING HTTPX------------------------"
 
-    echo -e "\n- Installing Sublister"
-    git clone https://github.com/aboul3la/Sublist3r.git -q ~/tools/Sublist3r
-    cd ~/tools/Sublist3r && sudo pip3 install -r requirements.txt > /dev/null 2>&1
-    git clone https://github.com/1ndianl33t/Gf-Patterns -q && mv Gf-Patterns/*.json ~/.gf/ && rm -rf Gf-Patterns/ > /dev/null 2>&1
-    if [ -s ~/tools/Sublist3r/sublister.py ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Installing Bhedak"
-    cd && pip3 install bhedak > /dev/null 2>&1
-    cd && pip3 install tldextract > /dev/null 2>&1
-    which bhedak &> /dev/null && 
-    if command -v bhedak &> /dev/null; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Installing Agnee"
-    sudo pip3 install git+https://github.com/R0X4R/Search-Engines-Scraper.git > /dev/null 2>&1 && sudo pip3 install agnee > /dev/null 2>&1
-    if command -v agnee &> /dev/null; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Installing uro"
-    cd && pip3 install uro > /dev/null 2>&1
-    if command -v uro &> /dev/null; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Installing anew"
-    go install github.com/tomnomnom/anew@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/anew ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Installing naabu"
-    go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/naabu ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Installing gobuster"
-    go install github.com/OJ/gobuster/v3@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/gobuster ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
+#INSTALL GETJSBEAUTIFY.SH
+echo -e "\n-----------------------INSTALLING getjsbeautify.sh------------------------"
+wget https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/jsbeautify.py
+mv jsbeautify.py ./tools/
+wget https://gist.githubusercontent.com/KathanP19/c02130b163ba5817ca2ae99f7630f60f/raw/467cbb5d3773845bfd0e15b2608d6130dd1b6cd7/getjsbeautify.sh
+mv getjsbeautify.sh ./tools/
+echo -e "\n-----------------------FINISHED INSTALLING getjsbeautify.sh------------------------"
 
-    echo -e "\n- Installing gf"
-    go install github.com/tomnomnom/gf@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/anew ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
+#INSTALL JSVAR.SH
+echo -e "\n-----------------------INSTALLING jsvar.sh--------------------------------"
+wget https://gist.githubusercontent.com/KathanP19/d2cda2f99c0b60d64b76ee6039b37e47/raw/eb105a4de06502b2732df9d682c61189c3703685/jsvar.sh
+mv jsvar.sh ./tools/
+echo -e "\n-----------------------FINISHED INSTALLING jsvar.sh-----------------------"
 
-    echo -e "\n- Installing gospider"
-    cd && git clone https://github.com/jaeles-project/gospider ~/tools/.tmp/gospider -q
-    cd ~/tools/.tmp/gospider 2> /dev/null
-    go install > /dev/null 2>&1
-    if [ -f ~/go/bin/gospider ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
+#INSTALL findomxss.sh
+echo -e "\n-----------------------INSTALLING findomxss.sh--------------------------------"
+wget https://gist.githubusercontent.com/KathanP19/9c1a8a322ada7b40462caf6897687cce/raw/5d370a06c36257aa99cdc5d91d05f74a18c91ce7/findomxss.sh
+mv findomxss.sh ./tools/
+echo -e "\n-----------------------FINISHED INSTALLING findomxss.sh-----------------------"
 
-    echo -e "\n- Installing aquatone"
-    wget -q https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip  > /dev/null 2>&1
-    unzip aquatone_linux_amd64_1.7.0.zip > /dev/null 2>&1
-    mv aquatone /usr/bin/ > /dev/null 2>&1
-    rm -rf aquatone* LICENSE.txt README.md
-    if command -v aquatone &> /dev/null; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
+#INSTALL HAKRAwler
+echo -e "\n-----------------------INSTALLING HAKRAWLER------------------------"
+go install -v github.com/hakluke/hakrawler@latest
+echo -e "\n-----------------------FINISHED INSTALLING HAKRAWLER------------------------"
 
-    echo -e "\n- Installing assetfinder"
-    go install github.com/tomnomnom/assetfinder@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/assetfinder ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
+#INSTALL LINKFINDER
+echo -e "\n-----------------------INSTALLING LINKFINDER------------------------"
+cd ./tools
+git clone https://github.com/dark-warlord14/LinkFinder
+cd -
+pip3 install --user -r ./tools/LinkFinder/requirements.txt
+cd ./tools/LinkFinder/
+if ! test `which sudo`; then
+	python3 setup.py install
+else 
+	sudo python3 setup.py install
+fi
+cd -
+echo -e "\n-----------------------FINISHED INSTALLING LINKFINDER------------------------"
 
-    echo -e "\n- Installing crobat"
-    go install github.com/cgboal/sonarsearch/cmd/crobat@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/crobat ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing gau"
-    go install github.com/lc/gau/v2/cmd/gau@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/gau ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing waybackurls"
-    go install github.com/tomnomnom/waybackurls@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/waybackurls ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing kxss"
-    go install github.com/Emoe/kxss@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/kxss ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing qsreplace"
-    go install github.com/tomnomnom/qsreplace@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/qsreplace ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing ffuf"
-    cd ~/tools/.tmp/ && git clone https://github.com/ffuf/ffuf -q
-    cd ffuf && go install > /dev/null 2>&1
-    if [ -f ~/go/bin/ffuf ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing dnsx"
-    go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/dnsx ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing notify"
-    go install -v github.com/projectdiscovery/notify/cmd/notify@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/notify ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing dalfox"
-    go install github.com/hahwul/dalfox/v2@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/dalfox ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing crlfuzz"
-    cd ~/tools/.tmp/ && git clone https://github.com/dwisiswant0/crlfuzz -q
-    cd crlfuzz/cmd/crlfuzz && go install > /dev/null 2>&1
-    if [ -f ~/go/bin/crlfuzz ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing nuclei"
-    go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/nuclei ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing subfinder"
-    go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/subfinder ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing httprobe"
-    cd ~/tools/.tmp && git clone https://github.com/tomnomnom/httprobe.git -q
-    cd httprobe && go install > /dev/null 2>&1
-    if [ -f ~/go/bin/httprobe ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing httpx"
-    go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/httpx ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing amass"
-    go install -v github.com/OWASP/Amass/v3/...@master > /dev/null 2>&1
-    if [ -f ~/go/bin/amass ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-
-    echo -e "\n- Installing gobuster"
-    go install github.com/OJ/gobuster/v3@latest > /dev/null 2>&1
-    if [ -f ~/go/bin/gobuster ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-}
-
-wordlistsd(){
-    echo -e "\n${BK}DOWNLOADING ALL THE WORDLISTS${RT}"
-    cd ~/wordlists/
-    
-    echo -e "\n- Downloading subdomains wordlists"
-    wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/deepmagic.com-prefixes-top50000.txt -O subdomains.txt
-    if [ -s subdomains.txt ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Downloading resolvers wordlists"
-    wget -q https://raw.githubusercontent.com/janmasarik/resolvers/master/resolvers.txt -O resolvers.txt
-    if [ -s resolvers.txt ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-    
-    echo -e "\n- Downloading fuzz wordlists"
-    wget -q https://raw.githubusercontent.com/Bo0oM/fuzz.txt/master/fuzz.txt -O fuzz.txt
-    if [ -s fuzz.txt ]; then
-        echo -e "${GR}SUCCESS${RT}"
-    else
-        echo -e "${YW}FAILED${RT}"
-    fi
-}
-
-main(){
-    folders
-    dependencies
-    githubd
-    wordlistsd
-    echo -e "\n${BK}FINISHING UP THINGS${RT}"
-    rm -rf ~/tools/.tmp/ > /dev/null 2>&1
-    sudo cp ~/go/bin/* /usr/bin/ > /dev/null 2>&1
-    nuclei -update-templates > /dev/null 2>&1
-    echo -e "\nPLEASE CONFIGURE NOTIFY API'S IN ${BK} ~/.config/notify/provider-config.yaml ${RT} FILE"
-    echo -e "THANKS FOR INSTALLING ${BK}GARUD${RT}. HAPPY HUNTING :)\nPS: If you get any bug using garud, please tweet about it and tag @R0X4R, also support me on ko-fi"
-    garud -h 2> /dev/null
-}
-
-while true
-do
-    main
-    exit
-done
+#INSTALL GETJSWORDS.py
+echo -e "\n-----------------------INSTALLING GETJSWORDS.PY------------------------"
+wget https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/getjswords.py
+mv getjswords.py ./tools/
+echo -e "\n-----------------------FINISHED INSTALLING GETJSWORDS.PY------------------------"
