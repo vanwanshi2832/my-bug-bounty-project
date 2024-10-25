@@ -1,152 +1,59 @@
-# ppfuzz
+# ppmap ![markdown_statistic](https://img.shields.io/github/downloads/kleiton0x00/ppmap/total)
+A simple scanner/exploitation tool written in GO which automatically exploits known and existing gadgets (checks for specific variables in the global context) to perform XSS via Prototype Pollution. NOTE: The program only exploits known gadgets, but does not cover code analysis or any advanced Prototype Pollution exploitation, which may include custom gadgets.
 
-<p align="left">
-	<a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/made%20with-Rust-red"></a>
-	<a href="#"><img src="https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-blueviolet"></a>
-	<a href="https://github.com/dwisiswant0/ppfuzz/releases"><img src="https://img.shields.io/github/release/dwisiswant0/ppfuzz?color=blue"></a>
-	<a href="https://github.com/dwisiswant0/ppfuzz/issues"><img src="https://img.shields.io/github/issues/dwisiswant0/ppfuzz?color=yellow"></a>
-</p>
-
-Prototype Pollution Fuzzer
-
-<img src="https://user-images.githubusercontent.com/25837540/124197070-f0ffb800-daf7-11eb-9d65-edda5d94633f.jpg" alt="ppfuzz, Prototype Pollution Fuzzer">
-
-A fast tool to scan client-side prototype pollution vulnerability written in Rust. 🦀
-
-- [Installation](#installation)
-  - [Binary](#binary)
-  - [Source](#source)
-  - [Dependencies](#dependencies)
-- [Demonstration](#demonstration)
-- [Usage](#usage)
-  - [Basic](#basic)
-  - [Options](#options)
-- [Usage](#usage)
-- [Supporting Materials](#supporting-materials)
-- [Contributing](#contributing)
-- [Attribution](#attribution)
-- [Acknowledments](#acknowledments)
-- [License](#license)
-
----
+## Requirements
+Make sure to have Chromium installed. No need to worry, **setup.sh** will automatically install that for you.  
 
 ## Installation
-
-### Binary
-
-Simply, download a pre-built binary from [releases page](https://github.com/dwisiswant0/ppfuzz/releases) and run!
-
-### Source
-
-<table>
-	<td><b>NOTE:</b> <a href="https://www.rust-lang.org/tools/install">Rust</a> should be installed!</td>
-</table>
-
-Using `cargo`:
-
+- Run the following command to clone the repo: 
+ ```bash
+git clone https://github.com/kleiton0x00/ppmap.git
+ ```
+ - Change the directory to ppmap and execute **setup.sh**:  
 ```bash
-▶ cargo install ppfuzz
-```
-
-#### — or
-
-Manual building executable from source code:
-
-```bash
-▶ git clone https://github.com/dwisiswant0/ppfuzz
-▶ cd ppfuzz && cargo build --release
-# binary file located at target/release/ppfuzz
-```
-
-### Dependencies
-
-**ppfuzz** uses [chromiumoxide](https://github.com/mattsse/chromiumoxide), which requires Chrome or Chromium browser to be installed.
-If the `CHROME` environment variable is set, then it'll use it as the default executable. Otherwise, the filenames `google-chrome-stable`, `chromium`, `chromium-browser`, `chrome` and `chrome-browser` are searched for in standard places. If that fails, `/Applications/Google Chrome.app/...` _(on MacOS)_ or the registry _(on Windows)_ is consulted.
-
-## Demonstration
-
-![ppfuzz-demonstration](https://user-images.githubusercontent.com/25837540/125734819-b4e53913-6f6b-4d3c-937a-e936526d6483.gif)
-
-As you can see in the demo above _(click to view in high-quality)_, **ppfuzz** attempts to check for prototype-pollution vulnerabilities by adding an object & pointer queries, if it's indeed vulnerable: it'll fingerprinting the script gadgets used and then display additional payload info that could potentially escalate its impact to XSS, bypass or cookie injection.
+cd ppmap/ && bash setup.sh
+```  
+That's it. Enjoy using ppmap!
+  
+- Note: If you face error during manually compiling or during the setup (for some reasons), you can download the precompiled one:  
+  - Download the already compiled binary [here](https://github.com/kleiton0x00/ppmap/releases)
+  - Give it the permission to execute ```chmod +x ppmap```
 
 ## Usage
 
-It's fairly simple to use **ppfuzz**!
+Using the program is very simple, you can either:
+- scan a directory/file (or even just the website itself):  
+```echo 'https://target.com' | ppmap```
 
-```bash
-▶ ppfuzz -l FILE [OPTIONS]
-```
+- or endpoint:  
+```echo 'http://target.com/something/?page=home' | ppmap```
 
-### Basic
+For mass scanning:  
+``` cat url.txt | ppmap``` where **url.txt** contains all url(s) in column.
 
-Use `-l/--list` to provide input list:
+## Demo
+![](https://i.imgur.com/05nvfwX.gif)
 
-```bash
-▶ ppfuzz -l FILE
-```
+Feel free to test the tool on the following websites as a part of demonstration and to also check if the software is working correctly:  
+https://msrkp.github.io/pp/2.html  
+https://ctf.nikitastupin.com/pp/known.html  
+https://grey-acoustics.surge.sh
 
-You can also provide the list using I/O redirection:
+## Workflow
 
-```bash
-▶ ppfuzz < FILE
-```
+- Identify if the website is vulnerable to Prototype Pollution by heuristic scan (via location.hash and location.search)
+- Fingerprint the known gadgets (checks for specific variables in the global context)
+- Display the final XSS payload which can be exploited
 
-— or chain it from another command output:
+## Credits
 
-```bash
-▶ cat FILE | ppfuzz
-```
+Many thanks to @Tomnomnom for the inspiration: https://www.youtube.com/watch?v=Gv1nK6Wj8qM&t=1558s  
+The workflow of this program is hugely based on this article: https://infosecwriteups.com/javascript-prototype-pollution-practice-of-finding-and-exploitation-f97284333b2  
+The fingerprint javascript file is based on this git: https://gist.github.com/nikitastupin/b3b64a9f8c0eb74ce37626860193eaec
 
-Only show vulnerable targets/suppress an errors:
-
-```bash
-▶ ppfuzz -l FILE 2>/dev/null
-```
-
-### Options
-
-Here are all the options it supports:
-
-```bash
-▶ ppfuzz -h
-```
-
-| **Flag**          	| **Description**                        	| **Default value** 	|
-|-------------------	|----------------------------------------	|-------------------	|
-| -l, --list        	| List of target URLs                    	|                   	|
-| -c, --concurrency 	| Set the concurrency level              	| 5                 	|
-| -t, --timeout     	| Max. time allowed for connection _(s)_ 	| 30                	|
-| -h, --help        	| Prints help information                	|                   	|
-| -V, --version     	| Prints version information             	|                   	|
-
-## Supporting Materials
-
-- [Nuclei templates](https://github.com/projectdiscovery/nuclei-templates/blob/master/headless/prototype-pollution-check.yaml)
-- [PPScan](https://github.com/msrkp/PPScan)
-- [Prototype Pollution and useful Script Gadgets](https://github.com/BlackFan/client-side-prototype-pollution)
-- [JavaScript prototype pollution attack in NodeJS](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)
-- [Prototype pollution – and bypassing client-side HTML sanitizers](https://research.securitum.com/prototype-pollution-and-bypassing-client-side-html-sanitizers/)
-
-## Contributing
-
-[![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwisiswant0/ppfuzz/issues)
-
-When I started **ppfuzz**, I had very little or no knowledge on Rust and I believe there may be a lot of drawbacks/security vulnerabilities. So all contributions are welcome, of course — any bug reports & suggestions are appreciated, some environment have not been tested yet.
-
-## Attribution
-
-Besides being my learning medium, this tool was created because it was inspired by [@R0X4R](https://twitter.com/R0X4R/status/1402906185301323776)'s tip on [how to automate prototype pollution checking](https://twitter.com/R0X4R/status/1402906185301323776) using [page-fetch](https://github.com/detectify/page-fetch).
-
-Cross-compile GitHub workflow inspired by [crodjer](https://github.com/crodjer)'s [sysit](https://github.com/crodjer/sysit/commit/160bdae51b2c90c3b6e8a0e6c4832506ebc55694).
-
-## Acknowledments
-
-Since this tool includes some contributions, I'll publically thank the following users for their helps and resources:
-
-- [@mattsse](https://github.com/mattsse) - for his awesome [chromiumoxide](https://github.com/mattsse/chromiumoxide) & mentoring me which helped a lot to quickly adapt Rust!
-- `Fourty2#4842` _(Discord)_ - for helpful workaround.
-- [All contributors](https://github.com/dwisiswant0/ppfuzz/graphs/contributors).
-
-## License
-
-**ppfuzz** is distributed under MIT. See `LICENSE`.
+## In the news
+- 14/06/21: [Intigriti Bug Bytes #131](https://blog.intigriti.com/2021/07/14/bug-bytes-131-credential-stuffing-in-bug-bounty-hijacking-shortlinks-hacker-shows/) - Tool of the week
+- 26/06/21: [Hackin9](https://hakin9.org/ppmap-a-scanner-exploitation-tool/) - Article  
+- 23/09/21: [GeeksForGeeks](https://www.geeksforgeeks.org/ppmap-a-scanner-or-exploitation-tool-written-in-go/) - Article  
+- 22/10/21: [Hacktricks](https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution/client-side-prototype-pollution) - Client Side Prototype Pollution  
+- 04/06/22 [BlackArch Linux](https://github.com/BlackArch/blackarch-site/commit/68696c40be1629095cd547559ce078a4c77a7073) - Officially added in BlackArch Linux :tada:
