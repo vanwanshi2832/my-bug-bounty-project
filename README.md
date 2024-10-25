@@ -1,199 +1,203 @@
-# BigBountyRecon
-BigBountyRecon tool utilises 58 different techniques using various Google dorks and open source tools to expedite the process of initial reconnaissance on the target organisation. Reconnaissance is the most important step in any penetration testing or a bug hunting process. It provides an attacker with some preliminary knowledge on the target organisation. Furthermore, it will be useful to gain insights into what controls are in place as well as some rough estimations on the security maturity level of the target organisation. 
 
-This tool can be used in addition to your usual approach for bug hunting. The idea is to quickly check and gather information about your target organisation without investing time and remembering these syntaxes. In addition, it can help you define an approach towards finding some quick wins on the target.
+# Chiasmodon
+
+[![asciicast](https://asciinema.org/a/QrEtBLFMQrjU1sjRjcgTdo41m.svg)](https://asciinema.org/a/QrEtBLFMQrjU1sjRjcgTdo41m)
+<p align="center">
+<img src="https://badge.fury.io/py/chiasmodon.svg" />
+</p>
+Chiasmodon is an OSINT tool that allows users to gather information from various sources and conduct targeted searches based on domains, Google Play applications, email addresses, IP addresses, organizations, URLs, and more. It provides comprehensive scanning capabilities, customizable output formats, and additional options for enhanced data analysis and customization.
+
+
+## ✨Features
+
+- [x] **🌐Domain**: Conduct targeted searches by specifying a domain name to gather relevant information related to the domain.
+- [x] **🎮Google Play Application**: Search for information related to a specific application on the Google Play Store by providing the application ID.
+- [x] **✉️Email, 👤Username, 🔒Password**: Conduct searches based on email, username, or password to identify potential security risks or compromised credentials.
+- [x] **🔍 IP Address**: Perform searches using an IP address to gather information such as geolocation, associated domain names, and historical data.
+- [x] **🌍 CIDR**: Search for information related to a specified CIDR (Classless Inter-Domain Routing) block, including IP range details and associated networks.
+- [x] **🔢 ASN**: Retrieve information about an Autonomous System Number (ASN), including its owner, associated IP ranges, and network details.
+- [x] **🔌 Port**: Search for information about a specific port number, including its common usage, associated services, and potential vulnerabilities.
+- [x] **🌐 ISP**: Conduct searches based on an Internet Service Provider (ISP) name to gather information about the ISP, its services, and associated IP ranges.
+- [x] **🏢 Organization (ORG)**: Search for information related to a specific organization or company, including its contact details, associated domains, and network infrastructure.
+- [x] **🔗 URL Path**: Perform searches based on a specific URL path to gather information about the path, its content, and potential security risks.
+- [x] **📞 Phone**: Conduct searches using a phone number to gather information such as the associated owner, location, and any available public records.
+- [x] **🔍Scan**: Perform a comprehensive scan on a given company domain name in one click, including finding
+  - Related companies.
+  - App applications.
+  - Ips (`Port, Org, Isp, Asn`).
+  - Subdomains.
+  - Client credentials (`Email, Username, Password`).
+  - Employee credentials (`Email, Username, Password`)
+  - URLs (`Domain/IP, Port, Endpoint`)
+
+- [X] **🌍Country**: Sort and filter search results by country to gain insights into the geographic distribution of the identified information.
+- [x] **📋Output Customization**: Choose the desired output format (text, JSON, or CSV) and specify the filename to save the search results.
+- [x] **⚙️Additional Options**: The tool offers various additional options, such as viewing different result types (credentials, URLs, subdomains, emails, passwords, usernames, or applications), setting API tokens, specifying timeouts, limiting results, and more.
+
+## 🚀Comming soon
+
+- **🏢Company Name**: We understand the importance of comprehensive company research. In our upcoming release, you'll be able to search by company name and access a wide range of documents associated with that company. This feature will provide you with a convenient and efficient way to gather crucial information, such as legal documents, financial reports, and other relevant records.
+
+- **👤Face (Photo)**: Visual data is a powerful tool, and we are excited to introduce our advanced facial recognition feature. With "Search by Face (Photo)," you can upload an image containing a face and leverage cutting-edge technology to identify and match individuals across various data sources. This will allow you to gather valuable information, such as social media profiles, online presence, and potential connections, all through the power of facial recognition.
+
+## Why Chiasmodon name ?
+Chiasmodon niger is a species of deep sea fish in the family Chiasmodontidae. It is known for its ability to **swallow fish larger than itself**. and so do we. 😉
+![Chiasmodon background](https://journal.voca.network/wp-content/uploads/2017/10/DTR083_1200.png)
+
+## 🔑 Subscription
+Join us today and unlock the potential of our cutting-edge OSINT tool. Contact https://t.me/Chiasmod0n on Telegram to subscribe and start harnessing the power of Chiasmodon for your domain investigations.
+
+## ⬇️Install
+```bash
+$ pip install chiasmodon
+```
+Only for linux 👇 
+```bash
+$ activate-global-python-argcomplete
+```
+## 💻Usage
+Chiasmodon provides a flexible and user-friendly command-line interface and python library. Here are some examples to demonstrate its usage:
+
+
+```
+usage: chiasmodon_cli.py [-h]
+                         [-m {cred.username,cred.password,cred.email,cred.phone,cred.email.domain,cred.country,domain,domain.all,ip,ip.asn,ip.isp,ip.org,ip.port,ip.country,app.id,app.name,app.domain,url.path,url.port}]
+                         [-vt {full,cred,url,email,phone,password,username,app,domain,ip,related,subdomain}] [-s] [-sr SCAN_RELATED]
+                         [-ss SCAN_SUBDOMAINS] [-sa SCAN_APPS] [-si SCAN_IPS] [-sc SCAN_CLIENTS] [-se SCAN_EMPLOYEES] [-o OUTPUT]
+                         [-ot {text,json,csv}] [-t TIMEOUT] [-l LIMIT] [-nc] [-lv] [-lm] [--init INIT] [-v]
+                         query
+
+Chiasmodon CLI
+
+positional arguments:
+  query                 query argument
+
+options:
+  -h, --help            show this help message and exit
+  -m {cred.username,cred.password,cred.email,cred.phone,cred.email.domain,cred.country,domain,domain.all,ip,ip.asn,ip.isp,ip.org,ip.port,ip.country,app.id,app.name,app.domain,url.path,url.port}, --method {cred.username,cred.password,cred.email,cred.phone,cred.email.domain,cred.country,domain,domain.all,ip,ip.asn,ip.isp,ip.org,ip.port,ip.country,app.id,app.name,app.domain,url.path,url.port}
+                        method to search by it,default is "domain".
+  -vt {full,cred,url,email,phone,password,username,app,domain,ip,related,subdomain}, --view-type {full,cred,url,email,phone,password,username,app,domain,ip,related,subdomain}
+                        type view the result default is "full".
+  -s, --scan            scan the company domain (Related company, Clients, Employees, Company ASNs, Company Apps).
+  -sr SCAN_RELATED, --scan-related SCAN_RELATED
+                        Run related scan, default is yes, Ex: -sr no
+  -ss SCAN_SUBDOMAINS, --scan-subdomains SCAN_SUBDOMAINS
+                        Run subdomains scan, default is yes, Ex: -ss no
+  -sa SCAN_APPS, --scan-apps SCAN_APPS
+                        Run App scan, default is yes, Ex: -sa no
+  -si SCAN_IPS, --scan-ips SCAN_IPS
+                        Run IPs scan, default is yes, Ex: -si no
+  -sc SCAN_CLIENTS, --scan-clients SCAN_CLIENTS
+                        Run clients scan, default is yes, Ex: -sc no
+  -se SCAN_EMPLOYEES, --scan-employees SCAN_EMPLOYEES
+                        Run employees scan, default is yes, Ex: -se no
+  -o OUTPUT, --output OUTPUT
+                        filename to save the result
+  -ot {text,json,csv}, --output-type {text,json,csv}
+                        output format default is "text".
+  -t TIMEOUT, --timeout TIMEOUT
+                        request timeout default is 360 sec.
+  -l LIMIT, --limit LIMIT
+                        limit results default is 10000.
+  -nc, --no-color       show result without color.
+  -lv, --list-view-type
+                        list view type.
+  -lm, --list-methods   list methods.
+  --init INIT           set the api token.
+  -v, --version         version.
+```
 
-Any suggestions or ideas for this tool are welcome - just tweet me on [@ManiarViral](https://twitter.com/maniarviral)
+Examples:
+```
+# Scan company by domain
+chiasmodon_cli.py example.com --scan
 
-![image](https://user-images.githubusercontent.com/3501170/104112108-d9145c00-533e-11eb-85be-cb1d33fc9362.png)
+# Search for target domain, you will see the result for only this "example.com" 
+chiasmodon_cli.py example.com 
+    
+# Search in target and target subdomains
+chiasmodon_cli.py example.com --method domain.all
 
-# ANYRUN:
-- https://app.any.run/tasks/b31a5e6a-7ead-470e-b5e8-02fffd55f255/
+# Search for target subdomains
+chiasmodon_cli.py example.com --view-type subdomain
+        
+# Search for all creds in United States 
+chiasmodon_cli.py US --method cred.country
 
-# Techniques
+# Search for related companies by domain
+chiasmodon_cli.py example.com --view-type related
 
-1. Directory Listing: Finding open directories using Google Dork on your target organisation helps one to understand the directory structure on the webserver. It may reveal sensitive information or it may lead to information disclosure.
+# search for target app id 
+chiasmodon_cli.py com.discord --method app.id 
+    
+# search for target app domain 
+chiasmodon_cli.py discord.com --method app.domain
+    
+# search for target app name 
+chiasmodon_cli.py Discord --method app.name
+    
+# Search for ip asn
+chiasmodon_cli.py AS123 --method ip.asn
 
-2. Configuration Files: Often times configuration files contains sensitive information such as hardcoded passwords, sensitive drive locations or API tokens which can help you gain privilege access to the internal resources.
+# Search for cred username
+chiasmodon_cli.py someone --method cred.username
 
-3. Database Files: Database Files are data files that are used to store the contents of the database in a structured format into a file in separate tables and fields. Depending on the nature of the web application these files could provide access to sensitive information.
+# Search for cred password
+chiasmodon_cli.py example@123 --method cred.password
 
-4. WordPress: WordPress is an open-source CMS written in PHP. WordPress has thousands of plugins to build, customise and enhance the websites. There are numerous vulnerabilities in these plugins. Finding WordPress related 
+# Search for url endpoint
+chiasmodon_cli.py /wp-login.php --method url.path
 
-5. Log Files: Log files sometimes provide detailed information of the users' activities in a particular application. These files are good to look at session cookies or other types of tokens.
+# Search for ip
+chiasmodon_cli.py 1.1.1.1 --method ip
 
-6. Backup and Old Files: Backup files are original copies of the critical systems. These provide access to PII or access to sensitive records.
+# Search for cidr
+chiasmodon_cli.py xx.xx.xx.0/24 --method ip
 
-7. Login Pages: It is extremely important to identify login pages of your target organisation to perform bruteforce attempts or trying default credentials to gain further access to organisation resources. 
+# Search for target creds by domain emsils
+chiasmodon_cli.py example.com --method cred.email.domain
 
-8. SQL Errors: SQL errors leaks sensitive information about the backend systems. This can help one to perform enumeration on the database types and see if the application is vulnerable to input validation related attacks such as SQL Injection.
+# Search for target email
+chiasmodon_cli.py someone@example.com --method cred.email  
 
-9. Apache Config Files: Apache HTTP Server is configured by placing directives in plain text configuration files. The main configuration file is usually called httpd.conf. In addition, other configuration files may be added using the Include directive, and wildcards can be used to include many configuration files. Any directive may be placed in any of these configuration files. Depending on the entries in these config files it may reveal database connection strings, username and passwords, the internal workings, used and referenced libraries and business logic of application.
+# search for multiple targets: 
+chiasmodon_cli.py targets.txt --method domain  --output example-creds.txt 
+```
 
-10. Robots.txt File: Robots.txt file instructs web robots how to crawl pages on their website. Depending on the content of the file, an attacker might discover hidden directories and files.
+Please note that these examples represent only a fraction of the available options and use cases. Refer to the documentation for more detailed instructions and explore the full range of features provided by Chiasmodon.
 
-11. DomainEye: DomainEye is a domain/host investigation tool that has the largest domain databases. They provide services such as reverse Whois, reverse IP lookup, as well as reverse NS and MX.
 
-12. Publicly Exposed Documents: Such documents can be used to extract metadata information. 
+## 💬 Contributions and Feedback
 
-13. phpinfo(): Exposing phpinfo() on its own isn't necessarily a risk, but in combination with other vulnerabilities could lead to your site becoming compromised. Additionally, module versions could make attackers life easier when targeting application using newly discovered exploits.
+Contributions and feedback are welcome! If you encounter any issues or have suggestions for improvements, please submit them to the Chiasmodon GitHub repository. Your input will help us enhance the tool and make it more effective for the OSINT community.
 
-14. Finding Backdoors: This can help one to identify website defacements or server hijacking related issues. By exploiting the open redirect vulnerability on the trusted web application, the attacker can redirect victims to a phishing page.
+## 📜License
 
-15. Install/Setup Files: Such files allows an attacker to perform enumeration on the target organisation. Information gathered using these files can help discover version details which can then be used to perform the targeted exploit.
+Chiasmodon is released under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](https://github.com/chiasmodon/LICENSE.txt) file for more details.
 
-16. Open Redirects: With these, we look at various known parameters vulnerable to open redirect related issues. 
+## ⚠️Disclaimer
 
-17. Apache Struts RCE: Successfully exploiting an RCE vulnerability could allow the attacker to run arbitrary programs. Here, we are looking for files with extensions of ".action" or ".do".
+Chiasmodon is intended for legal and authorized use only. Users are responsible for ensuring compliance with applicable laws and regulations when using the tool. The developers of Chiasmodon disclaim any responsibility for the misuse or illegal use of the tool.
 
-18. 3rd Party Exposure: Here we are looking for exposure of information on third party sites such as Codebeautify, Codeshare and Codepen.
+## 📢Acknowledgments
 
-19. Check Security Headers: Identify quickly if the target site is using security related headers in the server response.
+Chiasmodon is the result of collaborative efforts from a dedicated team of contributors who believe in the power of OSINT. We would like to express our gratitude to the open-source community for their valuable contributions and support.
 
-20. GitLab: Quickly look for sensitive information on the GitLab.
+## 🔗Chiasmodon Links
 
-21. Find Pastebin Entries: Shows you the results related to the target organisation on the Pastebin site. This could be passwords or any other sensitive information related to the target organisation. 
+- [🐍 Python Library](https://pypi.org/project/chiasmodon)
+- [📱 Mobile (APK)](https://github.com/chiasmod0n/chiasmodon-mobile)
+- [🌐 Website](https://chiasmodon.com)
+- [💬 Telegram](https://t.me/chiasmod0n)
+- [🐦 X/Twitter](https://x.com/chiasmod0n)
 
-22. Employees on LINKEDIN: Identifying employee names on LinkedIn can help you build a username list when it comes to password spraying attack.
 
-23. .HTACCESS / Sensitive Files: Look for sensitive file exposure. This may indicate a server misconfiguration.
+## ⭐️Star History
 
-24. Find Subdomains: Subdomain helps you expand the attack surface on the target organisation. There are numerous tools available to automate the process of subdomain enumeration. 
-
-25. Find Sub-Subdomains: Identify sub-sub domains on the target organisation using Google Dork,
-
-26. Find WordPress related exposure: WordPress related exposure helps you gain access to sensitive files and folders.
-
-27. BitBucket & Atlassian: Source code leakage, hardcoded credentials and access to cloud infrastructure. 
-
-28. PassiveTotal: PassiveTotal is a great tool to perform threat investigation. Using BigBountyRecon we will use PassiveTotal to identify subdomains on the target information.
-
-29. Stackoverflow: Source code exposure or any technology-specific questions mentioned on the Stackoverflow.
-
-30. Find WordPress related exposure using Wayback Machine: Look for archieved WordPress files using WaybackMachine.
-
-31. GitHub: Quickly look for sensitive information on the GitHub.
-
-32. OpenBugBounty: Look for publicly exposed security issues on the OpenBugBounty website.
-
-33. Reddit: Information about the particular organisation on the Reddit platform.
-
-34. Crossdomain.xml: Look for misconfigured crossdomain.xml files on the target organisation. 
-
-35. ThreatCrowd: Search engine for threats, however, we are going to use this to identify additional sub-domains.
-
-36. .git Folder: Source code exposure. it's possible to download the entire repository content if accessible.
-
-37. YouTube: Look for any recent news on Youtube.
-
-38. Digitalocean Spaces: Spaces is an S3-compatible object storage service that lets you store and serve large amounts of data. We will look for any data exposures.
-
-39. .SWF File (Google): Flash is dead. We are going to use Google Dorks to look for older versions of flash .swf's which contain vulnerabilities. 
-
-40. .SWF File (Yandex): Flash is dead. We are going to use Yandex to look for older versions of flash .swf's which contain vulnerabilities. 
-
-41. .SWF File (Wayback Machine): Flash is dead. We are going to use WaybackMachine to look for older versions of flash .swf's which contain vulnerabilities. 
-
-42. Wayback Machine: Look for archived files to access old files.
-
-43. Reverse IP Lookup: Reverse IP Lookup lets you discover all the domain names hosted on any given IP address. This will help you to explore the attack surface for a target organisation. 
-
-44. Traefik: Look for an open-source Edge Router for an unauthenticated interface which exposes internal services.
-
-45. Cloud Storage and Buckets: Google CSE for various cloud storages - aws, digitalocean, backblaze, wasabi, rackspace, dropbox, ibm, azure, dreamhost, linode, gcp, box, mailru
-
-46. s3 Buckets: Open s3 buckets.
-
-47. PublicWWW: Source code search engine indexes the content of over 200 million web sites and provides a query interface that lets the caller find any alphanumeric snippet, signature or keyword in the web pages ‘HTML’, ‘JavaScript’ and ‘CSS’ style sheet code.
-
-48. Censys (IPv4, Domains & Certs): Search engine for finding internet devices. We will use this to look for additional sub-domains using various endpoints on Censys.
-
-49. Shodan: Search engine for Internet-connected devices
-
-50. SharePoint RCE: Look for CVE-2020-0646 SharePoint RCE related endpoint.
-
-51. API Endpoints: Find WSDL files. 
-
-52. Gist Searches: Quickly look for sensitive information on the Gist pastes.
-
-53. CT Logs: Certificate Transparency (CT) is an Internet security standard and open-source framework for monitoring and auditing digital certificates. We will use to look for additional sub-domains for a targeted organisation.
-
-54. Password Leak: Look for plaintext passwords of internal employees exposed in various leaks.
-
-55. What CMS: Identify the version and type of CMS used by a target organisation for targeted enumeration and exploit research.
-
-# Screenshots
-
-Search for plaintext passwords for a target organisation:
-
-![image](https://user-images.githubusercontent.com/3501170/104828972-f909c980-58c2-11eb-8a6e-1fff243abd2d.png)
-
-Looking for subdomains and other interesting information on the target organisation:
-
-![image](https://user-images.githubusercontent.com/3501170/104829008-83eac400-58c3-11eb-9620-37f728b30fea.png)
-
-Finding Apache Struts related assets:
-
-![image](https://user-images.githubusercontent.com/3501170/104829022-ac72be00-58c3-11eb-8dc6-5d9a68f07ec5.png)
-
-Verifying if the URL contains extenstion of ".do":
-
-![image](https://user-images.githubusercontent.com/3501170/104829033-cd3b1380-58c3-11eb-84e8-17b331a3d45f.png)
-
-
-# How to use this tool?
-
-Step1: Download the file from Release section: https://github.com/Viralmaniar/BigBountyRecon/releases/download/v0.1/BigBountyRecon.exe
-
-Step2: Run the EXE file
-
-Step3: Enter the target domain
-
-Step4: Click on different buttons in the tool to find information
-
-Step5: In case of Google Captcha simply click on the puzzle and move ahead
-
-# Questions?
-
-Twitter: https://twitter.com/maniarviral <br>
-LinkedIn: https://au.linkedin.com/in/viralmaniar
-
-# Dorking operators across Google, DuckDuckGo, Yahoo and Bing
-
-Table obtained from: https://exposingtheinvisible.org/guides/google-dorking/
-
-Here is a table with possible dorks for various search engines.
-
-
-
-
-
-| Dork                                                        	| Description                                                                                                                                                                                                                                                 	| Google 	| DuckDuckGo 	| Yahoo 	| Bing 	|
-|-------------------------------------------------------------	|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|--------	|------------	|-------	|------	|
-| cache:[url]                                                 	| Shows the version of the web page from the search engine’s cache.                                                                                                                                                                                           	| ✓      	|            	|       	|      	|
-| related:[url]                                               	| Finds web pages that are similar to the specified web page.                                                                                                                                                                                                 	| ✓      	|            	|       	|      	|
-| info:[url]                                                  	| Presents some information that Google has about a web page, including similar pages, the cached version of the page, and sites linking to the page.                                                                                                         	| ✓      	|            	|       	|      	|
-| site:[url]                                                  	| Finds pages only within a particular domain and all its subdomains.                                                                                                                                                                                         	| ✓      	| ✓          	| ✓     	| ✓    	|
-| intitle:[text] or allintitle:[text]                         	| Finds pages that include a specific keyword as part of the indexed title tag. You must include a space between the colon and the query for the operator to work in Bing.                                                                                    	| ✓      	| ✓          	| ✓     	| ✓    	|
-| allinurl:[text]                                             	| Finds pages that include a specific keyword as part of their indexed URLs.                                                                                                                                                                                  	|      	|  ✓         	|       	|      	|
-| meta:[text]                                                 	| Finds pages that contain the specific keyword in the meta tags.                                                                                                                                                                                             	|      	|            	|       	|       	|
-| filetype:[file extension]                                   	| Searches for specific file types.                                                                                                                                                                                                                           	| ✓      	| ✓          	|      	| ✓    	|
-| intext:[text], allintext:[text], inbody:[text]              	| Searches text of page. For Bing and Yahoo the query is inbody:[text]. For DuckDuckGo the query is intext:[text]. For Google either intext:[text] or allintext:[text] can be used.                                                                           	| ✓      	| ✓          	|      	| ✓    	|
-| inanchor:[text]                                             	| Search link anchor text                                                                                                                                                                                                                                     	| ✓      	|            	|       	|      	|
-| location:[iso code] or loc:[iso code], region:[region code] 	| Search for specific region. For Bing use location:[iso code] or loc:[iso code] and for DuckDuckGo use region:[iso code].An iso location code is a short code for a country for example, Egypt is eg and USA is us. https://en.wikipedia.org/wiki/ISO_3166-1 	|       	| ✓          	|       	|     ✓ 	|
-| contains:[text]                                             	| Identifies sites that contain links to filetypes specified (i.e. contains:pdf)                                                                                                                                                                              	|       	|           	|       	|  ✓    	|
-| altloc:[iso code]                                           	| Searches for location in addition to one specified by language of site (i.e. pt-us or en-us)                                                                                                                                                                	|       	|            	|       	|  ✓    	|
-| feed:[feed type, i.e. rss]                                  	| Find RSS feed related to search term                                                                                                                                                                                                                        	|       	| ✓          	|  ✓    	| ✓    	|
-| hasfeed:[url]                                               	| Finds webpages that contain both the term or terms for which you are querying and one or more RSS or Atom feeds.                                                                                                                                            	| ✓      	| ✓          	|       	|  ✓    	| 
-| ip:[ip address]                                             	| Find sites hosted by a specific ip address                                                                                                                                                                                                                  	|       	|          	|    ✓   	|   ✓   	|
-| language:[language code]                                    	| Returns websites that match the search term in a specified language                                                                                                                                                                                         	|     	| ✓          	|   ✓    	|        	|
-| book:[title]                                                	| Searches for book titles related to keywords                                                                                                                                                                                                                	| ✓      	|            	|       	|      	|
-| maps:[location]                                             	| Searches for maps related to keywords                                                                                                                                                                                                                       	| ✓      	|            	|       	|      	|
-| linkfromdomain:[url]                                        	| Shows websites whose links are mentioned in the specified url (with errors)                                                                                                                                                                                 	|     	|            	|       	|     ✓   	|
-
-# Contribution & License
-
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</br>
-Want to contribute? Please fork it and hit up with a pull request.
-
-Any suggestions or ideas for this tool are welcome - just tweet me on [@ManiarViral](https://twitter.com/maniarviral)
+<a href="https://star-history.com/#chiasmod0n/chiasmodon&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=chiasmod0n/chiasmodon&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=chiasmod0n/chiasmodon&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=chiasmod0n/chiasmodon&type=Date" />
+ </picture>
+</a>
