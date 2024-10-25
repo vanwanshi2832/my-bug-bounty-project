@@ -1,190 +1,199 @@
-<div align="center">
+<h1 align="center">
   <br>
-  <img src="https://github.com/hahwul/dalfox/assets/13212227/38f4e2e4-baa4-4bcd-8e71-3d1bf01ade8c" alt="dalfox" width="400px;">
-</div>
+  <a href="https://github.com/R0X4R/Garud/"><img src=".github/img/garud.png" width="500px" alt="Garud"></a>
+</h1>
+                                                                                                                                            
+<h4 align="center">An automation tool that scans sub-domains, sub-domain takeover and then filters out xss, ssti, ssrf and more injection point parameters.</h4>
+
 <p align="center">
-  <a href="https://github.com/hahwul/dalfox/actions/workflows/go.yml"><img src="https://github.com/hahwul/dalfox/actions/workflows/go.yml/badge.svg"></a>
-  <a href=""><img src="https://api.codacy.com/project/badge/Grade/17cac7b8d1e849a688577f2bbdd6ecd0"></a>
-  <a href="https://goreportcard.com/report/github.com/hahwul/dalfox"><img src="https://goreportcard.com/badge/github.com/hahwul/dalfox"></a>
-  <a href="https://codecov.io/gh/hahwul/dalfox"><img src="https://codecov.io/gh/hahwul/dalfox/branch/main/graph/badge.svg"/></a>
-  <a href="https://twitter.com/intent/follow?screen_name=hahwul"><img src="https://img.shields.io/twitter/follow/hahwul?style=flat&logo=x"></a>
-  <a href=""><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat"></a>
+<a href="#"><img src="https://madewithlove.org.in/badge.svg"></a>
+<a href="https://ko-fi.com/i/IK3K34SJSA"><img src="https://img.shields.io/badge/buy%20me%20a%20ko--fi%20-donate-red"></a>
+<a href="https://twitter.com/R0X4R/"><img src="https://img.shields.io/badge/twitter-%40R0X4R-blue.svg"></a>
+<a href="https://github.com/R0X4R/Garud/issues"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat"></a>
+<a href="https://github.com/R0X4R/Garud/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+<a href="#"><img src="https://img.shields.io/badge/Made%20with-Bash-1f425f.svg"></a>
+<a href="https://github.com/R0X4R?tab=followers"><img src="https://img.shields.io/badge/github-%40R0X4R-orange"></a>
 </p>
 
-DalFox is a powerful open-source tool that focuses on automation, making it ideal for quickly scanning for XSS flaws and analyzing parameters. Its advanced testing engine and niche features are designed to streamline the process of detecting and verifying vulnerabilities.
+---
 
-As for the name, Dal([달](https://en.wiktionary.org/wiki/달)) is the Korean word for "moon," while "Fox" stands for "Finder Of XSS" or 🦊
+I made this tool to automate my recon and save my time. It really give me headache always type such command and then wait to complete one command and I type other command. So I collected some of the tools which is widely used in the bugbounty field. In this script I used Assetfinder, subfinder, amass, httpx, sublister, gauplus and gf patterns and then it uses dirsearch, dalfox, nuclei and kxss to find some low-hanging fruits.<br/> 
 
-## TOC
-- [Key features](#key-features)
-- [How to Install](#how-to-install)
-- [Usage](#usage)
-- [POC format](#poc-format)
-- [In the Code](#in-the-code)
-- [Screenshots](#screenshots)
-- [Wiki](#wiki)
-- [Question](#question)
-- [Changelog](#changelog)
-- [Contributing](#contributing)
+The script first enumerates all the subdomains of the give target domain using assetfinder, sublister, subfinder and amass then filters all live domains from the whole subdomain list then it extarct titles of the subdomains using httpx then it scans for subdomain takeover using nuclei. Then it uses gauplus to extract paramters of the given subdomains then it use gf patterns to filters xss, ssti, ssrf, sqli params from that given subdomains and then it scans for low hanging fruits as well. Then it'll save all the output in a text file like target-xss.txt. Then it will send the notifications about the scan using notify. <br/>
 
-## Key features
-Mode: `url` `sxss` `pipe` `file` `server` `payload`
-
-| Class         | Key Feature                   | Description                                                  |
-| ------------- | ----------------------------- | ------------------------------------------------------------ |
-| Discovery     | Parameter analysis            | - Find reflected param<br />- Find alive/bad special chars, event handler and attack code <br />- Identification of injection points(HTML/JS/Attribute) <br /> `inHTML-none` `inJS-none` `inJS-double` `inJS-single` `inJS-backtick` `inATTR-none` `inATTR-double` `inATTR-single` |
-|               | Static analysis               | - Check bad-header like CSP, XFO, etc.. with req/res base    |
-|               | BAV analysis                  | - Testing BAV(Basic Another Vulnerability) ,  e.g `sqli` `ssti` `open-redirects`, `crlf`, `esii`    |
-|               | Parameter Mining              | - Find new param with Dictionary attack (default is [GF-Patterns](https://github.com/1ndianl33t/Gf-Patterns))<br />- Support custom dictionary file (`--mining-dict-word`)<br />- Find new param with DOM<br />- Use remote wordlist to mining (`--remote-wordlists`) |
-|               | Built-in Grepping             | - It Identify the basic info leak of SSTi, Credential, SQL Error, and so on |
-|               | WAF Detection and Evasion     | - Detect to WAF(Web Application Firewall). <br />- if found waf and using special flag, evasion using slow request<br />- `--waf-evasion` |
-| Scanning      | XSS Scanning                  | - Reflected XSS / Stored XSS / DOM XSS<br />- DOM base verifying<br />- Headless base verifying<br />- Blind XSS testing with param, header(`-b` , `--blind` options)<br />- Only testing selected parameters (`-p`, `--param`)<br />- Only testing parameter analysis (`--only-discovery`) |
-|               | Friendly Pipeline             | - Single url mode (`dalfox url`)<br />- From file mode (`dalfox file urls.txt`)<br />- From IO(pipeline) mode (`dalfox pipe`)<br />- From raw http request file mode (`dalfox file raw.txt --rawdata`) |
-|               | Optimization query of payloads | - Check the injection point through abstraction and generated the fit payload.<br />- Eliminate unnecessary payloads based on badchar |
-|               | Encoder                       | - All test payloads(built-in, your custom/blind) are tested in parallel with the encoder.<br />- To Double URL Encoder<br />- To HTML Hex Encoder |
-|               | Sequence                      | - Auto-check the special page for stored xss (`--trigger`) <br />- Support (`--sequence`) options for Stored XSS , only `sxss` mode |
-| HTTP          | HTTP Options                  | - Overwrite HTTP Method (`-X`, `--method`)<br />- Follow redirects (`--follow-redirects`)<br />- Add header (`-H`, `--header`)<br />- Add cookie (`-C`, `--cookie`)<br />- Add User-Agent (`--user-agent`)<br />- Set timeout (`--timeout`)<br />- Set Delay (`--delay`)<br />- Set Proxy (`--proxy`)<br />- Set ignore return codes (`--ignore-return`)<br />- Load cookie from raw request (`--cookie-from-raw`) |
-| Concurrency   | Worker                        | - Set worker's number(`-w`, `--worker`)                      |
-|               | N * hosts                     | - Use multicast mode (`--multicast`) , only `file` / `pipe` mode |
-| Output        | Output                        | - Only the PoC code and useful information is write as Stdout<br />- Save output (`-o`, `--output`) |
-|               | Format                        | - JSON / Plain (`--format`)                                  |
-|               | Printing                      | - Silence mode (`--silence`)<br />- You may choose not to print the color (`--no-color`)<br />- You may choose not to print the spinner (`--no-spinner`)<br />- You may choose show only special poc code (`--only-poc`) |
-|               | Report                        | - Show detail report (`--report` and `--report-format=<plain/json>`)|
-| Extensibility | REST API                      | - API Server and Swagger (`dalfox server`)                   |
-|               | Payload Mode                  | - Generate and Enumerate Payloads for XSS Testing (`dalfox payload`) |
-|               | Found Action                  | - Lets you specify the actions to take when detected. <br />- Notify, for example (`--found-action`) |
-|               | Custom Grepping               | - Can grep with custom regular expressions on response<br />- If duplicate detection, it performs deduplication (`--grep`) |
-|               | Custom Payloads               | - Use custom payloads list file (`--custom-payload`) <br />- Custom alert value (`--custom-alert-value`) <br />- Custom alert type (`--custom-alert-type`)|
-|               | Remote Payloads               | - Use remote payloads from portswigger, payloadbox, etc.. (`--remote-payloads`)                  |
-| Package       | Package manager                | - [pkg.go.dev](https://pkg.go.dev/github.com/hahwul/dalfox/v2)<br/>- [homebrew with tap](https://github.com/hahwul/homebrew-dalfox)<br />- [snapcraft](https://snapcraft.io/dalfox)                                  |
-|               | Docker ENV                    | - [docker hub](https://hub.docker.com/repository/docker/hahwul/dalfox)<br />- [github package of docker](https://github.com/hahwul/dalfox/packages)     |
-|               | Other                         | - [github action](https://github.com/marketplace/actions/xss-scan-with-dalfox) |
-
-And the various options required for the testing :D
-
-## How to Install
-### Using homebrew (macos)
-```bash
-brew install dalfox
-
-# https://formulae.brew.sh/formula/dalfox
+```txt
+What's new in v4.0: fixed some previous issues and filter out time waste vulns(you need to find them manually) and added dorking.
 ```
 
-### Using snapcraft (ubuntu)
-```
-sudo snap install dalfox
-```
+<h3 align="left">How garud works</h3>
+<p align="center"><br/>
+<img src=".github/img/mindmap.png" alt="garud mindmap"><br/>
+<!-- <img src="img/roadmap.png" alt="How garud works""> -->
+</p><br/>
 
-### From source
+<h3>Installation</h3>
+
+**Requirements:** ``Go Language`` and ``Python 3``.<br>
+**System requirements:** Recommended to run on vps with ``1VCPU`` and ``2GB RAM``.<br>
+
+**Tools used - You must need to install these tools to use this script**<br>
+
+  <a href="https://github.com/projectdiscovery/subfinder">`subfinder`</a> •
+  <a href="https://github.com/aboul3la/Sublist3r">`sublist3r`</a> •
+  <a href="https://github.com/1ndianl33t/Gf-Patterns">`gf patterns`</a> •
+  <a href="https://github.com/projectdiscovery/dnsx">`dnsx`</a> •
+  <a href="https://github.com/tomnomnom/assetfinder">`assetfinder`</a> •
+  <a href="https://github.com/projectdiscovery/httpx">`httpx`</a> •
+  <a href="https://github.com/Emoe/kxss">`kxss`</a> •
+  <a href="https://github.com/projectdiscovery/nuclei">`nuclei`</a> •
+  <a href="https://github.com/hahwul/dalfox">`dalfox`</a> •
+  <a href="https://github.com/tomnomnom/anew">`anew`</a> •
+  <a href="https://github.com/projectdiscovery/notify">`notify`</a> •
+  <a href="https://github.com/michenriksen/aquatone">`aquatone`</a> •
+  <a href="https://github.com/OWASP/Amass">`amass`</a> •
+  <a href="https://github.com/lc/gau">`gau`</a> •
+  <a href="https://github.com/dwisiswant0/crlfuzz">`crlfuzz`</a> •
+  <a href="https://github.com/s0md3v/uro">`uro`</a> •
+  <a href="https://github.com/ffuf/ffuf">`ffuf`</a> •
+  <a href="https://github.com/projectdiscovery/naabu">`naabu`</a> •
+  <a href="https://github.com/Cgboal/SonarSearch">`crobat`</a> •
+  <a href="https://github.com/OJ/gobuster">`gobuster`</a> •
+  <a href="https://github.com/jaeles-project/gospider">`gospider`</a> •
+  <a href="https://github.com/tomnomnom/waybackurls">`waybackurls`</a><br>
+
 
 ```bash
-go install github.com/hahwul/dalfox/v2@latest
+#Make sure you're root before installing the tool
 
-# The actual release might slightly differ. This is because go install references the main branch.
+garud:~ sudo su
+garud:~ apt install git
+garud:~ git clone https://github.com/R0X4R/Garud.git && cd Garud/ && chmod +x garud install.sh && mv garud /usr/bin/ && ./install.sh
 ```
 
-More information? please read [Installation guide](https://dalfox.hahwul.com/docs/installation/)
+> **Note**: If you encounter any-issue while running `install.sh` file or `garud` run `sed -i -e 's/\r$//' install.sh`
 
-## Usage
-```
-dalfox [mode] [target] [flags] 
+<h3>Usage</h3>
+
+
+```js 
+
+
+                █▀▀▀ █▀▀█ █▀▀█ █░░█ █▀▀▄
+                █░▀█ █▄▄█ █▄▄▀ █░░█ █░░█
+                ▀▀▀▀ ▀░░▀ ▀░▀▀ ░▀▀▀ ▀▀▀░
+
+[GARUD] == A RECONNAISSANCE SUITE FOR BUG BOUNTY (@R0X4R)
+
+Example Usage:
+garud [-d target.tld] [-x exclude domains] [--json] [-s]
+
+Flags:
+   -d, --domain                 string     Add your target                         -d target.tld
+   -x, --exclude                string     Exclude out of scope domains            -x /home/dommains.list
+
+Optional Flags:
+   -s, --silent                            Hide output in the terminal             Default: False
+   -j, --json                              Store output in a single json file      Default: False
+   -v, --version                           Print current version of Garud
+
 ```
 
-Single target mode
+**Fix errors while using or installing Garud**
+    
 ```bash
-dalfox url http://testphp.vulnweb.com/listproducts.php\?cat\=123\&artist\=123\&asdf\=ff \
-	-b https://your-callback-url
+garud:~ chmod +x install.sh && ./install.sh
+Error: ./install.sh : /bin/bash^M : bad interpretor: No such file or directory
+                                                    
+# fix
+garud:~ sed -i -e 's/\r$//' install.sh
+```
+You can also copy the error and search on google this will make your debugging skills better ;)
+
+**Example Usage**
+
+```txt
+# garud -d hackerone.com
+```
+Exclude out of scope domains
+```txt
+# echo test.hackerone.com > ossdomain.txt
+# garud -d hackerone.com -x ~/ossdomain.txt
+```
+With all flags
+```txt
+# garud -d hackerone.com -j -s -x /home/oss.txt
 ```
 
-Multiple target mode from file
-```bash
-dalfox file urls_file --custom-payload ./mypayloads.txt
+Hide output in the terminal
+
+```txt
+# garud -d hackerone.com -s
 ```
 
-Pipeline mode
-```bash
-cat urls_file | dalfox pipe -H "AuthToken: bbadsfkasdfadsf87"
-```
+Store output in a single `json` file
 
-Other tips, See [wiki](https://github.com/hahwul/dalfox/wiki) for detailed instructions!
-
-## POC format
-Sample poc log
-```
-[POC][G][BUILT-IN/dalfox-error-mysql/GET] http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123DalFox
-[POC][V][GET] http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123%22%3E%3Csvg%2Fclass%3D%22dalfox%22onLoad%3Dalert%2845%29%3E
-```
-
-Format
-| Identity | Type | Information                     | BLANK | PoC Code                                                     |
-| -------- | ---- | ------------------------------- | ----- | ------------------------------------------------------------ |
-| POC      | G    | BUILT-IN/dalfox-error-mysql/GET |       | http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123DalFox |
-| POC      | R    | GET                             |       | http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123%22%3E%3Csvg%2Fclass%3D%22dalfox%22onLoad%3Dalert%2845%29%3E |
-| POC      | V    | GET                             |       | http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123%22%3E%3Csvg%2Fclass%3D%22dalfox%22onLoad%3Dalert%2845%29%3E |
-
-- Type: `G`(Grep) , `R`(Reflected) , ` V`(Verify)
-- Information: Method, grepping name, etc..
-
-Why is there a gap?
-It is a method to make it easier to parse only the poc code through cut etc. For example, you can do this.
-```bash
-dalfox url http://testphp.vulnweb.com/listproducts.php\?cat\=123\&artist\=123\&asdf\=ff \
-	| cut -d " " -f 2 > output
-cat output
-# http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123DalFox
-# http://testphp.vulnweb.com/listproducts.php?artist=123&asdf=ff&cat=123%22%3E%3Csvg%2FOnLoad%3D%22%60%24%7Bprompt%60%60%7D%60%22+class%3Ddalfox%3E
-```
-
-## In the code
-```go
-package main
-
-import (
-	"fmt"
-
-	dalfox "github.com/hahwul/dalfox/v2/lib"
-)
-
-func main() {
-	opt := dalfox.Options{
-		Cookie:     "ABCD=1234",
-	}
-	result, err := dalfox.NewScan(dalfox.Target{
-		URL:     "https://xss-game.appspot.com/level1/frame",
-		Method:  "GET",
-		Options: opt,
-	})
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(result)
-	}
+```txt
+# garud -d hackerone.com -s -j
+# cd hackerone
+# cat output.json | jq
+{
+  "nuclei_critical": [],
+  "vuln_crlf": [],
+  "dalfox": [
+    "[POC][V][GET][inATTR-double(3)-URL] http://subdomain.target.tld/hpp?pp=FUZZ%22onpointerout%3Dconfirm.call%28null%2C1%29+class%3Ddalfox+",
+    ----------------------snip----------------------
+    "subdomains": [
+      "sub.target.tld",
+      "tub.target.tld",
+      "subdomain.target.tld"
+  ],
+  "vuln_xss": [
+    "[POTENTIAL XSS] - http://subdomain.target.tld/hpp/?pp=%22%3E%2F%3E%3Csvg%2Fonload%3Dconfirm%28document.domain%29%3E ",
+    "[POTENTIAL XSS] - http://subdomain.target.tld:80/hpp/?pp=%22%3E%2F%3E%3Csvg%2Fonload%3Dconfirm%28document.domain%29%3E ",
+    "[POTENTIAL XSS] - http://subdomain.target.tld:80/hpp/index.php?pp=%22%3E%2F%3E%3Csvg%2Fonload%3Dconfirm%28document.domain%29%3E "
+  ]
 }
 ```
 
+**Docker**
+
+Contributed by [`@frost19k`](https://github.com/frost19k)
+
+This image needs to be built with [`Buildkit`](https://docs.docker.com/develop/develop-images/build_enhancements/)
 ```bash
-go build -o xssapp ; ./xssapp
-# [] [{V GET https://xss-game.appspot.com/level1/frame?query=%3Ciframe+srcdoc%3D%22%3Cinput+onauxclick%3Dprint%281%29%3E%22+class%3Ddalfox%3E%3C%2Fiframe%3E}] 2.618998247s 2021-07-11 10:59:26.508483153 +0900 KST m=+0.000794230 2021-07-11 10:59:29.127481217 +0900 KST m=+2.619792477}
+garud:~ git clone https://github.com/R0X4R/Garud.git
+garud:~ cd Garud 
+garud:~ docker buildx build -t garud -f Dockerfile .
 ```
 
-## Screenshots
-| ![1414](https://user-images.githubusercontent.com/13212227/108603497-7a390c80-73eb-11eb-92c1-b31bd9574861.jpg) | ![1415](https://user-images.githubusercontent.com/13212227/108603373-ebc48b00-73ea-11eb-9651-7ce4617845f6.jpg) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Single URL Scanning                                          | Massive(Multicast/Mass) Scanning                             |
-| ![1416](https://user-images.githubusercontent.com/13212227/108603375-ec5d2180-73ea-11eb-8e6e-d59d915c0291.jpg) | ![1417](https://user-images.githubusercontent.com/13212227/108613244-66b19400-7433-11eb-87fc-2f195f9011b3.jpg) |
-| REST API Server Mode                                 | Output and Customizing (found-action / grepping)              |
+To run the container
+```bash
+garud:~ docker run -t --rm \
+  -v "/path/on/host":"/output" \   # Mount the Host Output Folder to "/output"
+  -v "/path/to/configs":"/Garud/.config/notify" \   # Mount your Notify Config files to "/Garud/.config/notify"
+  garud -d hackerone.com
+```
+Garud runs as root inside the container & so it is advisable to configure Linux Namespaces 
+1. [Isolate containers with a user namespace](https://docs.docker.com/engine/security/userns-remap/)
+2. [Use Linux user namespaces to fix permissions in docker volumes](https://www.jujens.eu/posts/en/2017/Jul/02/docker-userns-remap/)
 
-## Wiki
-[Wiki](https://dalfox.hahwul.com/docs/home/)
+<h3>Notifications</h3>
 
-## Question
-Please use [discussions](https://github.com/hahwul/dalfox/discussions) actively!
+[`@slack`](https://slack.com/intl/en-it/help/articles/115005265063-Incoming-webhooks-for-Slack) •
+[`@discord`](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) •
+[`@telegram`](https://core.telegram.org/bots#3-how-do-i-create-a-bot) •
+[`configure-notify`](https://github.com/projectdiscovery/notify#config-file)
+                                                                
+<p align="left">
+<h3>Donate</h3> 
 
-## Changelog
-Detailed changes for each release are documented in the [release notes](https://github.com/hahwul/dalfox/releases).
+|[`buymeacoffee.com/R0X4R`](https://www.buymeacoffee.com/R0X4R)|[`payU India`](https://pmny.in/bIKNZngt4ys1)|[`kofi.com/R0X4R`](https://ko-fi.com/i/IK3K34SJSA)|
+|--------|--------|------|
 
-## Contributing
-DalFox's open-source project and made it with ❤️
-if you want contribute this project, please see [CONTRIBUTING.md](https://github.com/hahwul/dalfox/blob/main/CONTRIBUTING.md) and Pull-Request with cool your contents.
+### Thanks to the authors of the tools used in this script.
 
-[![](/CONTRIBUTORS.svg)](https://github.com/hahwul/dalfox/graphs/contributors)
+[`@aboul3la`](https://github.com/aboul3la) [`@tomnomnom`](https://github.com/tomnomnom) [`@lc`](https://github.com/lc) [`@hahwul`](https://github.com/hahwul) [`@projectdiscovery`](https://github.com/projectdiscovery) [`@maurosoria`](https://github.com/maurosoria) [`@shelld3v`](https://github.com/shelld3v) [`@devanshbatham`](https://github.com/devanshbatham) [`@michenriksen`](https://github.com/michenriksen) [`@defparam`](https://github.com/defparam/) [`@projectdiscovery`](https://github.com/projectdiscovery) [`@bp0lr`](https://github.com/bp0lr/) [`@ameenmaali`](https://github.com/ameenmaali) [`@dwisiswant0`](https://github.com/dwisiswant0) [`@OWASP`](https://github.com/OWASP/) [`@1ndianl33t`](https://github.com/1ndianl33t) [`@sqlmapproject`](https://github.com/sqlmapproject) [`@w9w`](https://github.com/w9w) [`@OJ`](https://github.com/OJ) [`@jaeles-project`](https://github.com/jaeles-project) [`@s0md3v`](https://github.com/s0md3v) [`@ffuf`](https://github.com/ffuf)
+
+Thanks to all the contributors [`contributors.md`](.github/contributors.md)
+
+**Warning:** This code was originally created for personal use, it generates a substantial amount of traffic, please use with caution.
