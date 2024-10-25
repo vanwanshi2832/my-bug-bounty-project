@@ -1,234 +1,152 @@
-<h1 align="center">
-  <br>
-  <a href="https://ibb.co/kG6XBMQ"><img src="https://i.ibb.co/QJjMQXr/magicrecon.png" alt="magicrecon" style="width:100%"></a>
-  <br>
-  MagicRecon: Fast, simple and effective 
-  <br>
-</h1>
+# ppfuzz
 
-
-<p align="center">
-  <a href="https://github.com/robotshell/magicRecon/releases">
-    <img src="https://img.shields.io/github/v/release/robotshell/magicrecon?include_prereleases">
-  </a>
-  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">
-    <img src="https://img.shields.io/github/license/robotshell/magicrecon">
-  </a>
-  <a href="https://github.com/robotshell/magicRecon/issues?q=is%3Aissue+is%3Aclosed">
-    <img src="https://img.shields.io/github/issues-closed/robotshell/magicrecon">
-  </a>
-  <a href="https://github.com/robotshell/magicRecon/commits/master">
-    <img src="https://img.shields.io/github/last-commit/robotshell/magicrecon">
-  </a>
-  <a href="https://github.com/robotshell/magicRecon/commits/master">
-    <img src="https://img.shields.io/github/languages/code-size/robotshell/magicrecon">
-  </a>
-  <a href="">
-    <img src="https://img.shields.io/twitter/follow/robotshelld?style=social">
-  </a>
+<p align="left">
+	<a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/made%20with-Rust-red"></a>
+	<a href="#"><img src="https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-blueviolet"></a>
+	<a href="https://github.com/dwisiswant0/ppfuzz/releases"><img src="https://img.shields.io/github/release/dwisiswant0/ppfuzz?color=blue"></a>
+	<a href="https://github.com/dwisiswant0/ppfuzz/issues"><img src="https://img.shields.io/github/issues/dwisiswant0/ppfuzz?color=yellow"></a>
 </p>
 
-MagicRecon is a powerful shell script to maximize the recon and data collection process of an objective and finding common vulnerabilities, all this saving the results obtained in an organized way in directories and with various formats.
+Prototype Pollution Fuzzer
 
-With Magic Recon you can perform passive and active reconnaissance, vulnerability analysis, subdomain scan and many more!
+<img src="https://user-images.githubusercontent.com/25837540/124197070-f0ffb800-daf7-11eb-9d65-edda5d94633f.jpg" alt="ppfuzz, Prototype Pollution Fuzzer">
 
--------------------------------------
+A fast tool to scan client-side prototype pollution vulnerability written in Rust. 🦀
 
-# Main features :boom: 
-- Save the results in an organized way in different formats.
-- Subdomain enumeration.
-- Check if the domains are alive.
-- Get whois information about every subdomain.
-- Get dns information about every subdomain.
-- Extract the technologies used in the domain.
-- Get information about the certificate used in the domain .
-- Take a screenshot on the domain.
-- Searches for emails on the domain, users and more things.
-- Enumerate public resources in AWS, Azure, and Google Cloud. 
-- Search juicy information via GitHub Dorks.
-- Check all entrys in robots.txt file.
-- Get all endpoints on the web.
-- Perform a parameter scan.
-- Perform a port scan to discover open ports. 
-- Perform a dirsearch to find directories and files.
-- Check if is possible to bypass 403 HTTP status code.
-- Perform a massive recon and vulnerability scan via Nuclei every X seconds.
-- Search missing security headers.
-- Check if the domain is vulnerable to Email spoofing.
-- Check if the domain is vulnerable to Subdomain takeover.
-- Check if the domain is vulnerable to Cross-Origin Resource Sharing (CORS).
-- Check if different endpoints are vulnerable to CSRF. 
-- Look for entry points in the URL and check if it is vulnerable to Open Redirect.
-- Look for entry points in the URL and check if it is vulnerable to Cross-site scripting (XSS). 
-- Look for entry points in the URL and check if it is vulnerable to SQL Injection (SQLi).
-- Look for entry points in the URL and check if it is vulnerable to Server-side request forgery (SSRF).
-- Search all JS files in the domain and perform a scan for API Keys, access tokens, endpoints, etc.
-- Check if the domain use a CMS and scan it.
-- And many more...
+- [Installation](#installation)
+  - [Binary](#binary)
+  - [Source](#source)
+  - [Dependencies](#dependencies)
+- [Demonstration](#demonstration)
+- [Usage](#usage)
+  - [Basic](#basic)
+  - [Options](#options)
+- [Usage](#usage)
+- [Supporting Materials](#supporting-materials)
+- [Contributing](#contributing)
+- [Attribution](#attribution)
+- [Acknowledments](#acknowledments)
+- [License](#license)
 
--------------------------------------
+---
 
-# Installation :hammer:
+## Installation
+
+### Binary
+
+Simply, download a pre-built binary from [releases page](https://github.com/dwisiswant0/ppfuzz/releases) and run!
+
+### Source
+
+<table>
+	<td><b>NOTE:</b> <a href="https://www.rust-lang.org/tools/install">Rust</a> should be installed!</td>
+</table>
+
+Using `cargo`:
 
 ```bash
-$ git clone https://github.com/robotshell/magicRecon
-$ cd magicRecon
-$ chmod +x install.sh
-$ ./install.sh
+▶ cargo install ppfuzz
 ```
 
--------------------------------------
+#### — or
 
-# Configuration :wrench:
-To configure MagicRecon tool you must open the `configuration.cfg` file and change variables defined by user data.
+Manual building executable from source code:
 
-It is also important to correctly configure tools such as `Subfinder` and `Notify` to guarantee the correct functioning of magicRecon.
-
-
--------------------------------------
-
-# Usage :eyes:
-**TARGET OPTIONS**
- 
-| Parameter | Description |
-|------|-------------|
-| -d | Target domain |
-| -w | Wildcard domain |
-| -l | Target list  |
- 
-**MODE OPTIONS**
- 
-| Parameter | Description |
-|------|-------------|
-| -a, --all | All mode - Full scan with full target recognition and vulnerability scanning |
-| -p, --passive | Passive reconnaissance (Footprinting) - Performs only passive recon with multiple tools |
-| -x, --active | Active reconnaissance (Fingerprinting) - Performs only active recon with multiple tools |
-| -r, --recon | Reconnaissance - Perform active and passive reconnaissance |
-| -v, --vulnerabilities | Vulnerabilities - Check multiple vulnerabilities in the domain/list domains |
-| -m, --massive | Massive recon - Massive vulnerability analysis with repetitions every X seconds |
- 
-**EXTRA OPTIONS**
- 
-| Parameter | Description |
-|------|-------------|
-| -n, --notify | Notify - This option is used to receive notifications via Discord, Telegram or Slack |
-| -h, --help | Help - Show help |
-
-
-
-```
-./magicrecon.sh -h                 
- __  __             _      ____                      
-|  \/  | __ _  __ _(_) ___|  _ \ ___  ___ ___  _ __  
-| |\/| |/ _` |/ _` | |/ __| |_) / _ \/ __/ _ \| '_ \ 
-| |  | | (_| | (_| | | (__|  _ <  __/ (_| (_) | | | |
-|_|  |_|\__,_|\__, |_|\___|_| \_\___|\___\___/|_| |_|
-              |___/                                  
-MagicRecon v.3.0 - Open Source Project | Author: Robotshell | Twitter: @robotshelld
-
-
-USAGE
-./magicrecon.sh [-d domain.com] [-w domain.com] [-l listdomains.txt]
-                      [-a] [-p] [-x] [-r] [-v] [-m] [-n] [-h] 
-
-TARGET OPTIONS
-   -d domain.com     Target domain
-   -w domain.com     Wildcard domain
-   -l list.txt       Target list
- 
-MODE OPTIONS
-   -a, --all         All mode - Full scan with full target recognition and vulnerability scanning
-   -p, --passive     Passive reconnaissance (Footprinting) - Performs only passive recon with multiple tools
-   -x, --active      Active reconnaissance (Fingerprinting) - Performs only active recon with multiple tools
-   -r, --recon       Reconnaissance - Perform active and passive reconnaissance
-   -v, --vulnerabilities         Vulnerabilities - Check multiple vulnerabilities in the domain/list domains
-   -m, --massive     Massive recon - Massive vulnerability analysis with repetitions every X seconds
- 
-EXTRA OPTIONS
-   -n, --notify      Notify - This option is used to receive notifications via Discord, Telegram or Slack
-   -h, --help                Help - Show this help
-
+```bash
+▶ git clone https://github.com/dwisiswant0/ppfuzz
+▶ cd ppfuzz && cargo build --release
+# binary file located at target/release/ppfuzz
 ```
 
--------------------------------------
-# Example Usage :speak_no_evil:
+### Dependencies
 
- All:
- ```
- ./magicrecon.sh -d domain.com -a
-  ```
- Passive reconnaissance to a list of domains:
-  ```
- ./magicrecon.sh -l domainlist.txt -p
-  ```
- Active reconnaissance to a domain:
-  ```
- ./magicrecon.sh -d domain.com -x
-  ```
- 
- Full reconnaissance:
-  ```
- ./magicrecon.sh -d domain.com -r
-  ```
- 
- Full reconnaissance and vulnerabilities scanning:
-  ```
- ./magicrecon.sh -d domain.com -r -v
-  ```
- 
- Full reconnaissance and vulnerabilities scanning to a wildcard:
-  ```
- ./magicrecon.sh -w domain.com 
-  ```
- 
- Massive reconnaissance and vulnerabilities scanning:
-  ```
- ./magicrecon.sh -w domain.com -m 
-  ```
+**ppfuzz** uses [chromiumoxide](https://github.com/mattsse/chromiumoxide), which requires Chrome or Chromium browser to be installed.
+If the `CHROME` environment variable is set, then it'll use it as the default executable. Otherwise, the filenames `google-chrome-stable`, `chromium`, `chromium-browser`, `chrome` and `chrome-browser` are searched for in standard places. If that fails, `/Applications/Google Chrome.app/...` _(on MacOS)_ or the registry _(on Windows)_ is consulted.
 
--------------------------------------
+## Demonstration
 
-# Sample video: passive reconnaissance :movie_camera:
+![ppfuzz-demonstration](https://user-images.githubusercontent.com/25837540/125734819-b4e53913-6f6b-4d3c-937a-e936526d6483.gif)
 
-![Example image](https://github.com/robotshell/magicRecon/blob/master/images/poc.gif)
+As you can see in the demo above _(click to view in high-quality)_, **ppfuzz** attempts to check for prototype-pollution vulnerabilities by adding an object & pointer queries, if it's indeed vulnerable: it'll fingerprinting the script gadgets used and then display additional payload info that could potentially escalate its impact to XSS, bypass or cookie injection.
 
--------------------------------------
+## Usage
 
-# To do :mage_man:
-- [x] Change tool operation to parameters.
-- [x] Improve the use of Notify.  
-- [ ] Add new interesting tools to find more vulnerabilities.
-- [ ] Save results in other formats.
-- [ ] Save the results in a document as a report.
-- [ ] Check if the emails found by the tool are leaked. 
-- [x] Integrate RobotScraper.
+It's fairly simple to use **ppfuzz**!
 
--------------------------------------
+```bash
+▶ ppfuzz -l FILE [OPTIONS]
+```
 
-# Contribution & License :family:
+### Basic
 
-You can contribute in following ways:
+Use `-l/--list` to provide input list:
 
-- [Report bugs & add issues](https://github.com/robotshell/magicRecon/issues).
-- Fix something and open a pull request.
-- Give suggestions **(Ideas)** to make it better.
-- Spread the word.
+```bash
+▶ ppfuzz -l FILE
+```
 
-***MagicRecon*** is licensed under [GPL-3.0 License](https://github.com/robotshell/magicRecon/blob/master/LICENSE)
+You can also provide the list using I/O redirection:
 
--------------------------------------
+```bash
+▶ ppfuzz < FILE
+```
 
-# Special thanks
-* Special Thanks to Mohd Shibli for his great contributions in the article [Fasten your Recon process using Shell Scripting](https://medium.com/bugbountywriteup/fasten-your-recon-process-using-shell-scripting-359800905d2a#id_token=eyJhbGciOiJSUzI1NiIsImtpZCI6ImRiMDJhYjMwZTBiNzViOGVjZDRmODE2YmI5ZTE5NzhmNjI4NDk4OTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE1NzQxODIxNTUsImF1ZCI6IjIxNjI5NjAzNTgzNC1rMWs2cWUwNjBzMnRwMmEyamFtNGxqZGNtczAwc3R0Zy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwNjQzNTQ3NTE5MTA1NzIzOTYzOSIsImVtYWlsIjoicm9ib3RzaGVsbGRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6IjIxNjI5NjAzNTgzNC1rMWs2cWUwNjBzMnRwMmEyamFtNGxqZGNtczAwc3R0Zy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsIm5hbWUiOiJSb2JvdCBTaGVsbCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQUF1RTdtQnhZZklJNndVLXQ5OVNxbzFlaElpc1E4dzY4a2VJbWZrbE4yOD1zOTYtYyIsImdpdmVuX25hbWUiOiJSb2JvdCIsImZhbWlseV9uYW1lIjoiU2hlbGwiLCJpYXQiOjE1NzQxODI0NTUsImV4cCI6MTU3NDE4NjA1NSwianRpIjoiODYzMTNhZTQ3YTQ5NjJiNTdhMTBlZDA0NGJhYWUyMGQwZWM2Y2FlNCJ9.obOev9FLt7DWW2NbSIbFwPoUC-vNFrf5nru--6uL6knW1S6CjjqXAP_D0sedfukNC0DcJnqQDz88Yh48ECppB4wEv0ozgunc9Yx24m5OiNaEKvWr0D2WJsMsV9yN7Vxt7gJxTeVIstCLvWDYCl_1JBrDvJ2eXF4V9yamk61KCqmwoAJMjXEpwaDuzITFPIZM9V-nTpIgnsBh-BCERYqAcUc7Si0IpRAlyM9YG78va7o0Pe_zYrt4NbV8Cl--BzAzrFOfhIOxvk3CYWRfc9lrSz09TJRCEn4q-rR9v7LVIboKJAedhbkr8ShClMru8xRsdfne3fRIzV1iZxNn4GuW6A) 
-* Special Thanks to @KingOfBugbounty for his great contributions in the repository [KingOfBugBountyTips](https://github.com/KingOfBugbounty/KingOfBugBountyTips)
-* [@TomNomNom](https://twitter.com/TomNomNom)
-* [@pdiscoveryio](https://twitter.com/pdiscoveryio)
-* [@NahamSec](https://twitter.com/NahamSec)
-* [@s0md3v](https://twitter.com/s0md3v)
-* [@ofjaaah](https://twitter.com/ofjaaah)
-* [@KingOfBugbounty](https://twitter.com/KingOfBugbounty)
--------------------------------------
+— or chain it from another command output:
 
-# Disclaimer
+```bash
+▶ cat FILE | ppfuzz
+```
 
-This tool is intended for educational and research purposes only. The author and contributors are not responsible for any misuse of this tool. Users are advised to use this tool responsibly and only on systems for which they have explicit permission. Unauthorized access to systems, networks, or data is illegal and unethical. Always obtain proper authorization before conducting any kind of activities that could impact other users or systems.
+Only show vulnerable targets/suppress an errors:
+
+```bash
+▶ ppfuzz -l FILE 2>/dev/null
+```
+
+### Options
+
+Here are all the options it supports:
+
+```bash
+▶ ppfuzz -h
+```
+
+| **Flag**          	| **Description**                        	| **Default value** 	|
+|-------------------	|----------------------------------------	|-------------------	|
+| -l, --list        	| List of target URLs                    	|                   	|
+| -c, --concurrency 	| Set the concurrency level              	| 5                 	|
+| -t, --timeout     	| Max. time allowed for connection _(s)_ 	| 30                	|
+| -h, --help        	| Prints help information                	|                   	|
+| -V, --version     	| Prints version information             	|                   	|
+
+## Supporting Materials
+
+- [Nuclei templates](https://github.com/projectdiscovery/nuclei-templates/blob/master/headless/prototype-pollution-check.yaml)
+- [PPScan](https://github.com/msrkp/PPScan)
+- [Prototype Pollution and useful Script Gadgets](https://github.com/BlackFan/client-side-prototype-pollution)
+- [JavaScript prototype pollution attack in NodeJS](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)
+- [Prototype pollution – and bypassing client-side HTML sanitizers](https://research.securitum.com/prototype-pollution-and-bypassing-client-side-html-sanitizers/)
+
+## Contributing
+
+[![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwisiswant0/ppfuzz/issues)
+
+When I started **ppfuzz**, I had very little or no knowledge on Rust and I believe there may be a lot of drawbacks/security vulnerabilities. So all contributions are welcome, of course — any bug reports & suggestions are appreciated, some environment have not been tested yet.
+
+## Attribution
+
+Besides being my learning medium, this tool was created because it was inspired by [@R0X4R](https://twitter.com/R0X4R/status/1402906185301323776)'s tip on [how to automate prototype pollution checking](https://twitter.com/R0X4R/status/1402906185301323776) using [page-fetch](https://github.com/detectify/page-fetch).
+
+Cross-compile GitHub workflow inspired by [crodjer](https://github.com/crodjer)'s [sysit](https://github.com/crodjer/sysit/commit/160bdae51b2c90c3b6e8a0e6c4832506ebc55694).
+
+## Acknowledments
+
+Since this tool includes some contributions, I'll publically thank the following users for their helps and resources:
+
+- [@mattsse](https://github.com/mattsse) - for his awesome [chromiumoxide](https://github.com/mattsse/chromiumoxide) & mentoring me which helped a lot to quickly adapt Rust!
+- `Fourty2#4842` _(Discord)_ - for helpful workaround.
+- [All contributors](https://github.com/dwisiswant0/ppfuzz/graphs/contributors).
+
+## License
+
+**ppfuzz** is distributed under MIT. See `LICENSE`.
