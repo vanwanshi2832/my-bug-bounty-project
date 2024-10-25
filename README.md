@@ -1,141 +1,109 @@
-# go-dork
+# Project is now Deprecated as Dalfox has discovery option which can be used to identify reflecting params `dalfox file urls.txt --skip-xss-scanning -o reflecting.txt`
 
-[![License](https://img.shields.io/badge/license-MIT-_red.svg)](https://opensource.org/licenses/MIT)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwisiswant0/go-dork/issues)
+# Gxss v4.0
 
-The fastest dork scanner written in Go.
+A Light Weight Tool for checking reflecting Parameters in a URL. Inspired by [kxss](https://github.com/tomnomnom/hacks/tree/master/kxss) by [@tomnomnom](https://twitter.com/TomNomNom).
 
-<img src="https://user-images.githubusercontent.com/25837540/111008561-f22f9c80-83c3-11eb-8500-fb63456a4614.png" height="350">
+# Installation
 
-There are also various search engines supported by go-dork, including Google, Shodan, Bing, Duck, Yahoo and Ask.
+`go install github.com/KathanP19/Gxss@latest`
 
-- [Install](#install)
-- [Usage](#usage)
-  - [Basic Usage](#basic-usage)
-  - [Flags](#flags)
-  - [Querying](#querying)
-  - [Defining engine](#defining-engine)
-  - [Pagination](#pagination)
-  - [Adding custom headers](#adding-headers)
-  - [Using proxy](#using-proxy)
-  - [Chained with other tools](#chained-with-other-tools)
-- [Supporting Materials](#supporting-materials)
-- [Help & Bugs](#help--bugs)
-- [TODOs](#todos)
-- [License](#license)
-- [Version](#version)
+* If the above step doesn't work then you can try pre-built binary file from here
+  https://github.com/KathanP19/Gxss/releases
 
-## Install
+# Usage
 
-- [Download](https://github.com/dwisiswant0/go-dork/releases) a prebuilt binary from releases page, unpack and run! or
-- If you have [Go 1.15+](https://golang.org/dl/) compiler installed and configured:
+```
+                  
+ _____ __ __ _____ _____ 
+|   __|  |  |   __|   __|
+|  |  |-   -|__   |__   |
+|_____|__|__|_____|_____|
+                         
+        4.0 - @KathanP19
 
-```bash
-> GO111MODULE=on go install github.com/dwisiswant0/go-dork@latest
+Usage of Gxss:
+  -c int
+        Set the Concurrency (default 50)
+  -d string
+        Request data for POST based reflection testing
+  -h value
+        Set Custom Header.
+  -o string
+        Save Result to OutputFile
+  -p string
+        Payload you want to Send to Check Reflection (default "Gxss")
+  -u string
+        Set Custom User agent. Default is Mozilla (default "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36")
+  -v    Verbose mode
+  -x string
+        Proxy URL. Example: http://127.0.0.1:8080
 ```
 
-## Usage
+* Checking Single Url
 
-### Basic Usage
+    `echo "https://target.com/some.php?first=hello&last=world" | Gxss -c 100 `
+    
+* Checking List of Urls
 
-It's fairly simple, go-dork can be run with:
+    `cat urls.txt | Gxss -c 100 -p XssReflected`
 
-```bash
-> go-dork -q "inurl:'...'"
+* Save Urls Which have Reflecting Params in a file for further analysis
+
+    `cat urls.txt | Gxss -c 100 -o Result.txt`
+
+* For verbose mode `-v`
+
+    `cat urls.txt | Gxss -c 100 -o Result.txt -v `
+    
+* Send Custom Header `-h`
+    
+    `cat urls.txt | Gxss -c 100 -p Xss -h "Cookie: Value"`
+    
+* Send Custom User-Agent `-u`
+    
+    `cat urls.txt | Gxss -c 100 -p Xss -h "Cookie: Value" -u "Google Bot"`
+
+
+# How It Works
+1. It takes Urls from STDIN
+2. It check for the reflected value on params one by one. (There are some tool like qsreplace which replace all params value but gxss checks payload one by one which makes it different from all those tools.)
 ```
+For Example- 
+Url is https://example.com/?p=first&q=second
 
-### Flags
+First it will check if p param reflects
+https://example.com/?p=Gxss&q=second
 
-```bash
-> go-dork -h
+Then it will check if q param reflects
+https://example.com/?p=first&q=Gxss
 ```
+3. If reflection for any param is found it tells which param reflected in response.
 
-This will display help for the tool. Here are all the switches it supports.
+[![asciicast](https://asciinema.org/a/84mXOOcDrxzZ3eyW16Ap3eHwX.svg)](https://asciinema.org/a/84mXOOcDrxzZ3eyW16Ap3eHwX)
 
-| Flag           | Description                                          |
-|----------------|------------------------------------------------------|
-| -q/--query     | Search query _(required)_                            |
-| -e/--engine    | Provide search engine (default: Google)              |
-|                | _(options: Google, Shodan, Bing, Duck, Yahoo, Ask)_  |
-| -p/--page      | Specify number of pages (default: 1)                 |
-| -H/--header    | Pass custom header to search engine                  |
-| -x/--proxy     | Use proxy to surfing                                 |
-| -s/--silent    | Silent mode, prints only results in output           |
+# Use Case or How to add to your workflow
 
-### Querying
+`echo "testphp.vulnweb.com" | waybackurls | httpx -silent | Gxss -c 100 -p Xss | sort -u | dalfox pipe` 
 
-```bash
-> go-dork -q "inurl:..."
-```
+* [Dalfox](https://github.com/hahwul/dalfox) is Xss Scanner by [@hahwul](https://twitter.com/hahwul)
 
-Queries can also be input with stdin
+# TODO
 
-```bash
-> cat dorks.txt | go-dork -p 5
-```
+- [ ] TimeOut Option. 
+- [x] Add Post Method Support.
+- [x] Add Proxy Support.
+- [x] Add an option for user to add there own headers
+- [x] Add an option for User-Agent
 
-### Defining engine
+# Thanks To
 
-Search engine can be changed from the available engines: Google, Shodan, Bing, Duck, Yahoo, Ask.
-However, if the `-e` flag is not defined, it will use the Google search engine by default.
+* [Zoid](https://twitter.com/z0idsec) for helping me out with code.
+* [Parth Parmar](https://twitter.com/Parth97531) for adding Custom Header and User-Agent Support.
+* [Luska](https://github.com/LuskaBol) for adding proxy support and custom post data support
 
-```bash
-> go-dork -e bing -q ".php?id="
-```
+# To Support Me 
 
-This will do a search by the Bing engine.
+* You Can Buy Me A Coffee
 
-### Pagination
-
-By default, go-dork scrapes the first page, you can customize using the `-p` flag.
-
-```bash
-> go-dork -q "intext:'jira'" -p 5
-```
-
-It will search sequentially from pages 1 to 5.
-
-### Adding custom headers
-
-Maybe you want to use a search filter on the Shodan engine, you can use custom headers to add cookies or other header parts.
-
-```bash
-> go-dork -q "org:'Target' http.favicon.hash:116323821" \
-  --engine shodan -H "Cookie: ..." -H "User-Agent: ..."
-```
-
-### Using proxy
-
-Using a proxy, this can also be useful if Google or other engines meet Captcha.
-
-```bash
-> go-dork -q "intitle:'BigIP'" -p 2 -x http://127.0.0.1:8989
-```
-
-### Chained with other tools
-
-If you want to chain the `go-dork` results with another tool, use the `-s` flag.
-
-```bash
-> cat dorks.txt | go-dork | pwntools
-> go-dork -q "inurl:'/secure' intext:'jira' site:org" -s | nuclei -t workflows/jira-exploitaiton-workflow.yaml
-```
-
-## Supporting Materials
-
-- Hazana. _[Dorking on Steroids](https://hazanasec.github.io/2021-03-11-Dorking-on-Steriods/)_, 11 Mar. 2021, https://hazanasec.github.io/2021-03-11-Dorking-on-Steriods/.
-
-## Help & Bugs
-
-If you are still confused or found a bug, please [open the issue](https://github.com/dwisiswant0/go-dork/issues). All bug reports are appreciated, some features have not been tested yet due to lack of free time.
-
-## TODOs
-
-- [ ] Fixes Yahoo regexes
-- [ ] Fixes Google regexes if using custom User-Agent
-- [x] Stopping if there's no results & page flag was set
-- [ ] DuckDuckGo next page
-
-## License
-
-MIT. See `LICENSE` for more details.
+    <a href="https://www.buymeacoffee.com/kathanp19" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
