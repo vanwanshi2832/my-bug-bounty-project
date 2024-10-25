@@ -1,104 +1,27 @@
-## How to contribute
-- First, fork this repository into your Github account
-- Second, clone repository and change to dev branch
-- Finaly, writing code push and PR to me
+# Welcome to InQL contributing guide
 
-## How to change branch
-```
-$ git clone https://github.com/hahwul/dalfox
-$ git branch dev
-$ git checkout dev
-$ git pull -v
-```
+Thank you for investing your time in contributing to InQL!
 
-## Writing code
-I'm checking the quality of code through Codacy when PR/Merge/Push. If you want to consider code quality in advance, please check the link below (not perfect, but very helpful).
+In this guide you will get an overview of our project and contribution workflow we expect.
 
-https://goreportcard.com/report/github.com/hahwul/dalfox
+## Project history and current status
 
-e.g: `https://goreportcard.com/report/github.com/{your github account}/dalfox`
+Originally InQL extension was implemented in Jython as it was officially supported by Portswigger. However, since then Jython development has stalled with Jython 3 version being abandoned by the development team. In the meantime, Python 2 has reached end of life in 2020 which lead to more and more tooling dropping support for it. Although technically it is possible to run Python 3 in JVM through [GraalVM](https://www.graalvm.org/python/) and [JEP](https://github.com/ninia/jep) none of these are supported by Portswigger and as such our users would need to deal with complicated setup before running InQL, which would hurt adoption.
 
-## Build
-```
-$ go build
-```
+Due to these considerations, we've decided to rewrite InQL in Kotlin. Current development is happening in [dev](https://github.com/doyensec/inql/tree/dev) branch and all of the commits & pull request should be sent to this branch.
 
-## Case study
-### How to add testing vector of XSS
-- Add new vector to https://github.com/hahwul/dalfox/blob/master/pkg/scanning/payload.go
-- Optimize but can affect performance, so please add a general and non-overlapping pattern.
+Right now the goal for the next version is refactoring the GraphQL parsing functionality in a separate (Jython / Python 2.7 / Python 3+ compatible) library, [GQLSpection](https://github.com/doyensec/gqlspection). Isolating this code will allow us to focus on improving and stabilizing this library (in Python) and rewriting everything else in Kotlin. Once GQLSpection becomes the last Python dependency, we will rewrite it in Kotlin as well (original repo will become a standalone tool, allowing it to drop support for Jython and Python 2.7).
 
-### How to add new entity(e.g event handler)
-- Add new pattern to https://github.com/hahwul/dalfox/blob/master/pkg/scanning/entity.go
+## Where to send patches
 
-### How to add BAV(Basic Another Vulnerability) Patterns
-- Add new code to https://github.com/hahwul/dalfox/blob/master/pkg/scanning/bav.go
-- The payload above needs to be defined below.
- + https://github.com/hahwul/dalfox/blob/master/pkg/scanning/payload.go
-- Add Greeping pattern
- + https://github.com/hahwul/dalfox/blob/master/pkg/scanning/grep.go
-- e.g
-payload.go
-```go
-func getSQLIPayload() []string {
-	payload := []string{
-		"'",
-		"''",
-    //... snip ...
-		" AND 1=1#",
-		" AND 1=0#",
-		" ORDER BY 1",
-	}
-	return payload
-}
-```
+First, decide which repo to target. If you are interested in GraphQL introspection parsing code, please target [GQLSpection](https://github.com/doyensec/gqlspection), if you are interested in GUI and Burp-specific features instead then go ahead and target InQL proper.
 
-bav.go
-```go
-//SqliAnalysis is basic check for SQL Injection
-func SqliAnalysis(target string, options model.Options) {
-	// sqli payload
-	bpu, _ := url.Parse(target)
-	bpd := bpu.Query()
-	var wg sync.WaitGroup
-	concurrency := options.Concurrence
-	reqs := make(chan *http.Request)
+In both repos development is happening in **dev** branches, so this is where you should be sending pull requests (not the default **main** branches, as they only contain released code).
 
-	for i := 0; i < concurrency; i++ {
-		wg.Add(1)
-		go func(){
-			for req := range reqs {
-				SendReq(req, "toGrepping", options)
-			}
-			wg.Done()
-		}()
-	}
+## Development workflow
 
-	for bpk := range bpd {
-    // Load payload here!
-		for _, sqlipayload := range getSQLIPayload() {
-			turl, _ := optimization.MakeRequestQuery(target, bpk, sqlipayload, "toGrepping", options)
-			reqs <- turl
-		}
-	}
-	close(reqs)
-	wg.Wait()
-}
-```
-
-grep.go
-```go
-//mysql
-		"dalfox-error-mysql1":  "SQL syntax.*?MySQL",
-		"dalfox-error-mysql2":  "Warning.*?mysqli?",
-		"dalfox-error-mysql3":  "MySQLSyntaxErrorException",
-		"dalfox-error-mysql4":  "valid MySQL result",
-		"dalfox-error-mysql5":  "check the manual that (corresponds to|fits) your MySQL server version",
-		"dalfox-error-mysql6":  "check the manual that (corresponds to|fits) your MariaDB server version",
-		"dalfox-error-mysql7":  "check the manual that (corresponds to|fits) your Drizzle server version",
-		"dalfox-error-mysql8":  "Unknown column '[^ ]+' in 'field list'",
-		"dalfox-error-mysql9":  "com\\.mysql\\.jdbc",
-		"dalfox-error-mysql10": "Zend_Db_(Adapter|Statement)_Mysqli_Exception",
-		"dalfox-error-mysql11": "MySqlException",
-		"dalfox-error-mysql12": "Syntax error or access violation",
-```
+1. Fork the repository
+2. Check out the 'dev' branch
+3. Compile the existing code by running `./gradlew` or `./gradlew.bat`
+4. Make changes in your fork
+5. Create pull request to the 'dev' branch, explain the rationale in the message or link to an issue that is solved by PR
