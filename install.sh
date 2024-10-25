@@ -1,89 +1,102 @@
 #!/bin/bash
 
-#MAKE DIRECTORIES
+. ./configuration.cfg
+
+BOLD=$(tput bold)
+YELLOW=$(tput setaf 3)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+NORMAL=$(tput sgr0)
+
+printf "${BOLD}${YELLOW}##########################################################\n"
+printf "##### Welcome to the MagicRecon dependency installer #####\n"
+printf "##########################################################\n\n${NORMAL}"
+
+sudo apt-get -y update
+
+printf "${BOLD}${MAGENTA}Installing programming languages and essential packages\n${NORMAL}"
+sudo apt-get install -y python3-pip dnspython golang cargo html2text whatweb theharvester nmap dirsearch sqlmap cargo subjack
+
+printf "${BOLD}${MAGENTA}Cloning repositories and installing dependencies\n${NORMAL}"
+cd $HOME
 mkdir -p tools
+cd tools
 
-#INSTALL INTERLACE
-echo -e "\n-----------------------INSTALLING INTERLACE------------------------"
-cd ./tools
-git clone https://github.com/codingo/Interlace.git
-cd -
-pip3 install --user -r ./tools/Interlace/requirements.txt
-cd ./tools/Interlace/
-if ! test `which sudo`; then
-	python3 setup.py install	
-else
-	sudo python3 setup.py install
-fi
-cd -
-echo -e "\n-----------------------FINISHED INSTALLING INTERLACE------------------------"
+declare -A REPOS=(
+  ["Asnlookup"]="https://github.com/yassineaboukir/Asnlookup"
+  ["ssl-checker"]="https://github.com/narbehaj/ssl-checker"
+  ["cloud_enum"]="https://github.com/initstring/cloud_enum"
+  ["GitDorker"]="https://github.com/obheda12/GitDorker"
+  ["robotScraper"]="https://github.com/robotshell/robotScraper.git"
+  ["nuclei-templates"]="https://github.com/projectdiscovery/nuclei-templates.git"
+  ["SecLists"]="https://github.com/danielmiessler/SecLists"
+  ["Corsy"]="https://github.com/s0md3v/Corsy.git"
+  ["SecretFinder"]="https://github.com/m4ll0k/SecretFinder.git"
+  ["CMSeeK"]="https://github.com/Tuhinshubhra/CMSeeK"
+  ["findomain"]="https://github.com/findomain/findomain.git"
+  ["hacks"]="https://github.com/tomnomnom/hacks"
+  ["Bolt"]="https://github.com/s0md3v/Bolt"
+  ["Gf-Patterns"]="https://github.com/1ndianl33t/Gf-Patterns"
+)
 
-#INSTALL SECRETFINDER
-echo -e "\n-----------------------INSTALLING SECRETFINDER------------------------"
-cd ./tools
-git clone https://github.com/m4ll0k/SecretFinder.git
-cd -
-pip3 install --user -r ./tools/SecretFinder/requirements.txt
-echo -e "\n-----------------------FINISHED INSTALLING SECRETFINDER------------------------"
+for repo in "${!REPOS[@]}"; do
+  printf "${CYAN}Cloning ${repo}\n${NORMAL}"
+  git clone "${REPOS[$repo]}"
+  cd "$repo"
+  if [ -f requirements.txt ]; then
+    pip3 install -r requirements.txt --break-system-packages
+  fi
+  cd ..
+done
 
-#INSTALL GAU
-echo -e "\n-----------------------INSTALLING GAU------------------------"
-go install -v github.com/tomnomnom/waybackurls@latest
-go install -v github.com/lc/gau@latest
-echo -e "\n-----------------------FINISHED INSTALLING GAU------------------------"
+pip3 install arjun
 
-#INSTALL SUBJS
-echo -e "\n-----------------------INSTALLING SUBJS------------------------"
-go install -v github.com/lc/subjs@latest
-echo -e "\n-----------------------FINISHED INSTALLING SUBJS------------------------"
+printf "${CYAN}Building findomain\n${NORMAL}"
+cd findomain
+cargo build --release
+sudo cp target/release/findomain /usr/bin/
+cd ..
 
-#INSTALL HAKCHECKURL
-echo -e "\n-----------------------INSTALLING HTTPX------------------------"
-go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-echo -e "\n-----------------------FINISHED INSTALLING HTTPX------------------------"
+printf "${CYAN}Building anti-burl\n${NORMAL}"
+cd hacks/anti-burl/
+go build main.go
+sudo mv main ~/go/bin/anti-burl
+cd ../..
 
-#INSTALL GETJSBEAUTIFY.SH
-echo -e "\n-----------------------INSTALLING getjsbeautify.sh------------------------"
-wget https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/jsbeautify.py
-mv jsbeautify.py ./tools/
-wget https://gist.githubusercontent.com/KathanP19/c02130b163ba5817ca2ae99f7630f60f/raw/467cbb5d3773845bfd0e15b2608d6130dd1b6cd7/getjsbeautify.sh
-mv getjsbeautify.sh ./tools/
-echo -e "\n-----------------------FINISHED INSTALLING getjsbeautify.sh------------------------"
+mkdir -p ~/.gf
+cp -r Gf-Patterns/* ~/.gf
 
-#INSTALL JSVAR.SH
-echo -e "\n-----------------------INSTALLING jsvar.sh--------------------------------"
-wget https://gist.githubusercontent.com/KathanP19/d2cda2f99c0b60d64b76ee6039b37e47/raw/eb105a4de06502b2732df9d682c61189c3703685/jsvar.sh
-mv jsvar.sh ./tools/
-echo -e "\n-----------------------FINISHED INSTALLING jsvar.sh-----------------------"
+printf "${BOLD}${MAGENTA}Installing GO tools\n${NORMAL}"
+declare -a GO_TOOLS=(
+  "github.com/OWASP/Amass/v3/..."
+  "github.com/michenriksen/aquatone"
+  "github.com/projectdiscovery/subfinder/v2/cmd/subfinder"
+  "github.com/hakluke/hakrawler"
+  "github.com/tomnomnom/anew"
+  "github.com/projectdiscovery/httpx/cmd/httpx"
+  "github.com/projectdiscovery/notify/cmd/notify"
+  "github.com/projectdiscovery/nuclei/v2/cmd/nuclei"
+  "github.com/lc/gau"
+  "github.com/tomnomnom/gf"
+  "github.com/tomnomnom/qsreplace"
+  "github.com/hahwul/dalfox/v2"
+  "github.com/tomnomnom/hacks/html-tool"
+  "github.com/tomnomnom/waybackurls"
+)
 
-#INSTALL findomxss.sh
-echo -e "\n-----------------------INSTALLING findomxss.sh--------------------------------"
-wget https://gist.githubusercontent.com/KathanP19/9c1a8a322ada7b40462caf6897687cce/raw/5d370a06c36257aa99cdc5d91d05f74a18c91ce7/findomxss.sh
-mv findomxss.sh ./tools/
-echo -e "\n-----------------------FINISHED INSTALLING findomxss.sh-----------------------"
+for tool in "${GO_TOOLS[@]}"; do
+  printf "${CYAN}Installing $(basename $tool)\n${NORMAL}"
+  go install "$tool@latest"
+  sudo cp "$HOME/go/bin/$(basename $tool)" /usr/local/bin/
+done
 
-#INSTALL HAKRAwler
-echo -e "\n-----------------------INSTALLING HAKRAWLER------------------------"
-go install -v github.com/hakluke/hakrawler@latest
-echo -e "\n-----------------------FINISHED INSTALLING HAKRAWLER------------------------"
+echo 'source $GOPATH/src/github.com/tomnomnom/gf/gf-completion.bash' >> ~/.bashrc
+cp -r ~/go/src/github.com/tomnomnom/gf/examples ~/.gf
 
-#INSTALL LINKFINDER
-echo -e "\n-----------------------INSTALLING LINKFINDER------------------------"
-cd ./tools
-git clone https://github.com/dark-warlord14/LinkFinder
-cd -
-pip3 install --user -r ./tools/LinkFinder/requirements.txt
-cd ./tools/LinkFinder/
-if ! test `which sudo`; then
-	python3 setup.py install
-else 
-	sudo python3 setup.py install
-fi
-cd -
-echo -e "\n-----------------------FINISHED INSTALLING LINKFINDER------------------------"
+printf "${CYAN}Installing MailSpoof\n${NORMAL}"
+sudo pip3 install mailspoof
 
-#INSTALL GETJSWORDS.py
-echo -e "\n-----------------------INSTALLING GETJSWORDS.PY------------------------"
-wget https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/getjswords.py
-mv getjswords.py ./tools/
-echo -e "\n-----------------------FINISHED INSTALLING GETJSWORDS.PY------------------------"
+printf "${CYAN}Installing Shcheck\n${NORMAL}"
+git clone https://github.com/santoru/shcheck
+
+printf "${BOLD}${YELLOW}Installation completed successfully!\n${NORMAL}"
